@@ -1065,9 +1065,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x;
-               storage[i].Doors[j].hallwayBeginningy = storage[i].Doors[j].y;
-               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z + beginningHallLength;
+               storage[i].Doors[j].x = storage[i].Doors[j].x;
+               storage[i].Doors[j].y = storage[i].Doors[j].y;
+               storage[i].Doors[j].z = storage[i].Doors[j].z + beginningHallLength;
 
                //Testing the new coordinate of the door
                //world[storage[i].Doors[j].x][storage[i].Doors[j].y + 5][storage[i].Doors[j].z] = 4;
