@@ -109,8 +109,6 @@ typedef struct doorCoords
    int hallwayBeginningX;
    int hallwayBeginningY;
    int hallwayBeginningZ;
-   //Height of hallway
-   int hallwayHeight;
 } doorCoords;
 
 typedef struct blockCoords
@@ -119,8 +117,6 @@ typedef struct blockCoords
    int x;
    int y;
    int z;
-   //randblock colour
-   int cubeColour;
 } blockCoords;
 
 typedef struct stairCoords
@@ -133,8 +129,6 @@ typedef struct stairCoords
    int travelToX;
    int travelToY;
    int travelToZ;
-   //Stair block colour
-   int stairColour;
 } stairCoords;
 
 //Global structure to store all the information about level
@@ -153,6 +147,9 @@ typedef struct Room
    int floorShade;  //69
    int floorColour; //4
    int cubeColour;  //3
+   int stairColour; //1
+   //Height of hallway
+   int hallwayHeight;
    //The coords of the random blocks
    stairCoords stairs[1];
    //The coords of the random blocks
@@ -785,14 +782,7 @@ void generateLevel(int WORLD_Y)
    int floorShade = 69;
    int floorColour = 4;
    int cubeColour = 3;
-
-   for (i = 0; i < 9; i++)
-   {
-      storage[i].wallColour = wallColour;
-      storage[i].floorShade = floorShade;
-      storage[i].floorColour = floorColour;
-      //storage[i].cubeColour = cubeColour;
-   }
+   int stairColour = 1;
 
    //Choose room dimensions
    //This the max and min lengths of rooms
@@ -824,6 +814,18 @@ void generateLevel(int WORLD_Y)
    //This is maybe for the future if have time for it
    int minRoomHeight = 5; // Implement rng room height later...
    int maxRoomHeight = 11;
+
+   //Put constant variables inside the storage
+   for (i = 0; i < 9; i++)
+   {
+      storage[i].wallColour = wallColour;
+      storage[i].floorShade = floorShade;
+      storage[i].floorColour = floorColour;
+      storage[i].cubeColour = cubeColour;
+      storage[i].stairColour = stairColour;
+      storage[i].hallwayHeight = setHallWayWallHeight;
+      storage[i].yLength = setRoomHeight;
+   }
 
    srand(time(NULL)); //Include this at the beginning of using rand()
 
