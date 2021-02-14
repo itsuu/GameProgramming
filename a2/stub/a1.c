@@ -128,9 +128,9 @@ typedef struct stairCoords
    int y;
    int z;
    //The coords of the location to teleport the view point too
-   int travelToX;
-   int travelToY;
-   int travelToZ;
+   //int travelToX;
+   //int travelToY;
+   //int travelToZ;
 } stairCoords;
 
 //Global structure to store all the information about level
@@ -158,8 +158,8 @@ typedef struct Room
    int hallwayHeight;
    //==================================
 
-   //The coords of the random blocks
-   stairCoords stairs[1];
+   //The coords of the stairs
+   //stairCoords stairs[1];
    //The coords of the random blocks
    blockCoords randBlocks[2];
    //The coords of the coords
@@ -179,8 +179,10 @@ typedef struct savedViewPoint
 typedef struct worldLevels
 {
    int savedWorld[100][50][100];
-   savedViewPoint playersLastPointInWorld;
-   Room *level;
+   stairCoords stairGoingUp;
+   stairCoords stairGoingDown;
+   //savedViewPoint playersLastPointInWorld;
+   //Room level[9];
 
 } worldLevels;
 
@@ -188,7 +190,7 @@ worldLevels database[2];
 
 void initWorld();
 void showWorldGrid();
-void generateDungeonLevel(int WORLD_Y);
+void generateDungeonLevel(worldLevels database[2]);
 
 //Helper functions to generateDungeonLevel - builds vertical bridges
 void buildHallwayFromRoom0ToRoom3(Room storage[9], int floorColour, int wallColour, int setHallWayWallHeight, int floorShade);
@@ -212,12 +214,15 @@ float inverseValue(float valueToInverse);
 bool checkAreaAroundViewPoint(float x, float y, float z);
 
 //A2 functions
-void generateOutsideLevel(int WORLD_Y);
-void useStairs(float x, float y, float z);
-void saveCurrentViewpoint(float x, float y, float z);
+void generateOutsideLevel(worldLevels database[2]);
+
+void goDownStairs(worldLevels database[2], float playerX, float playerY, float playerZ);
+void goUpStairs(worldLevels database[2], float playerX, float playerY, float playerZ);
 
 void saveCurrentWorld(int saveWorldToThis[100][50][100]);
 void regenerateWorld(int regenerateThisWorld[100][50][100]);
+
+void spawnBesideBlock(worldLevels database[2]);
 
 /*** collisionResponse() ***/
 /* -performs collision detection and response */
@@ -267,8 +272,34 @@ void collisionResponse()
 
          if (isCube == false)
          {
-            //Moves the view point "1 cube" higher
-            setViewPosition((-1 * newX), (-1 * (newY + 1.5)), (-1 * newZ));
+            if (world[(int)newX][(int)newY][(int)newZ] == 13)
+            {
+               //Moves the view point "1 cube" higher
+               setViewPosition((-1 * newX), (-1 * (newY + 2.0)), (-1 * newZ));
+
+               initWorld();
+               generateDungeonLevel(database);
+               saveCurrentWorld(database[1].savedWorld);
+               //regenerateWorld(database[1].savedWorld);
+               //Go downstairs
+               goDownStairs(database, (-1 * newX), (-1 * newY), (-1 * newZ));
+            }
+            else if (world[(int)newX][(int)newY][(int)newZ] == 5)
+            {
+               //Moves the view point "1 cube" higher
+               setViewPosition((-1 * newX), (-1 * (newY + 2.0)), (-1 * newZ));
+
+               initWorld();
+               //generateDungeonLevel(database);
+               regenerateWorld(database[0].savedWorld);
+               //Go upstairs
+               goUpStairs(database, (-1 * newX), (-1 * newY), (-1 * newZ));
+            }
+            else
+            {
+               //Moves the view point "1 cube" higher
+               setViewPosition((-1 * newX), (-1 * (newY + 2.0)), (-1 * newZ));
+            }
          }
          else
          {
@@ -599,6 +630,8 @@ createTube(2, -xx, -yy, -zz, -xx-((x-xx)*25.0), -yy-((y-yy)*25.0), -zz-((z-zz)*2
       int convertedY;
       int convertedZ;
 
+      int check = 0;
+
       //Gravity
       if (flycontrol == 0)
       {
@@ -620,6 +653,56 @@ createTube(2, -xx, -yy, -zz, -xx-((x-xx)*25.0), -yy-((y-yy)*25.0), -zz-((z-zz)*2
          {
             //Constantly accelerates the character down to the ground
             setViewPosition(newX, newY + 0.3, newZ);
+         }
+
+         if (world[convertedX][convertedY - 1][convertedZ] == 5)
+         {
+            initWorld();
+            regenerateWorld(database[0].savedWorld);
+            goUpStairs(database, (-1 * newX), (-1 * newY), (-1 * newZ));
+         }
+
+         if (world[convertedX][convertedY - 1][convertedZ] == 13)
+         {
+            //Constantly accelerates the character down to the ground
+            setViewPosition(newX, newY + 0.3, newZ);
+
+            for (int i = 0; i < WORLDX; i++)
+            {
+               for (int j = 0; j < WORLDY; j++)
+               {
+                  for (int k = 0; k < WORLDZ; k++)
+                  {
+
+                     if (database[1].savedWorld[i][j][k] != 0)
+                     {
+                        check = 1;
+                        break;
+                     }
+                     else
+                     {
+                        check = 0;
+                     }
+                  }
+               }
+            }
+
+            if (check == 0)
+            {
+               //Generate dungeon
+               initWorld();
+               generateDungeonLevel(database);
+               //Saved Dungeon
+               saveCurrentWorld(database[1].savedWorld);
+            }
+            else
+            {
+               initWorld();
+               regenerateWorld(database[1].savedWorld);
+            }
+            //regenerateWorld(database[1].savedWorld);
+            //Go downstairs
+            goDownStairs(database, (-1 * newX), (-1 * newY), (-1 * newZ));
          }
       }
    }
@@ -711,11 +794,10 @@ int main(int argc, char **argv)
    else
    {
       /* your code to build the world goes here */
-
       int WORLD_Y = 24;
       //Pinkish white colour = 69
+      //0.909, 0.470, 0.737
       setUserColour(69, 0.909, 0.470, 0.737, 1.0, 0.909, 0.470, 0.737, 1.0);
-
       //White colour = 10
       //0.752, 0.725, 0.725
       setUserColour(10, 0.752, 0.725, 0.725, 1.0, 0.752, 0.725, 0.725, 1.0);
@@ -725,10 +807,13 @@ int main(int argc, char **argv)
       //Brown colour = 12
       //0.250, 0.109, 0.109
       setUserColour(12, 0.250, 0.109, 0.109, 1.0, 0.250, 0.109, 0.109, 1.0);
+      //Gray colour = 13
+      //0.160, 0.160, 0.160
+      setUserColour(13, 0.160, 0.160, 0.160, 1.0, 0.160, 0.160, 0.160, 1.0);
 
       initWorld();
       //showWorldGrid();
-      //generateDungeonLevel(WORLD_Y);
+      //generateDungeonLevel(database[0]);
 
       //REMEBER TO UNCOMMENT THESE / UPDATE THEM
       //setPlayerSpawnLocation();
@@ -738,7 +823,26 @@ int main(int argc, char **argv)
       //saveCurrentWorld(database[0].savedWorld);
       //initWorld();
       //regenerateWorld(database[0].savedWorld);
-      generateOutsideLevel(WORLD_Y);
+
+      generateOutsideLevel(database);
+      saveCurrentWorld(database[0].savedWorld);
+      spawnBesideBlock(database);
+      flycontrol = 0;
+      //initWorld();
+
+      //generateDungeonLevel(database);
+      //saveCurrentWorld(database[1].savedWorld);
+      //initWorld();
+
+      //regenerateWorld(database[0].savedWorld);
+
+      /*
+      printf("0 up X: %d Y: %d Z: %d \n", database[0].stairGoingUp.x, database[0].stairGoingUp.y, database[0].stairGoingUp.z);
+      printf("0 down X: %d Y: %d Z: %d \n", database[0].stairGoingDown.x, database[0].stairGoingDown.y, database[0].stairGoingDown.z);
+
+      printf("1 up X: %d Y: %d Z: %d \n", database[1].stairGoingUp.x, database[1].stairGoingUp.y, database[1].stairGoingUp.z);
+      printf("1 down X: %d Y: %d Z: %d \n", database[1].stairGoingDown.x, database[1].stairGoingDown.y, database[1].stairGoingDown.z);
+      */
    }
 
    /* starts the graphics processing loop */
@@ -804,7 +908,7 @@ void showWorldGrid()
    world[99][25][99] = 8;
 }
 
-void generateDungeonLevel(int WORLD_Y)
+void generateDungeonLevel(worldLevels database[2])
 {
    //This function generate one single level, can be called more than once. (Made heading into A2)
 
@@ -824,6 +928,9 @@ void generateDungeonLevel(int WORLD_Y)
     * Min X and Z: 3 units
     * Max X and Z: 15 units
     */
+
+   //Level in the world where the dungeon should be generated at
+   int WORLD_Y = 24;
 
    int i, j, k;
    int minStart = 6;
@@ -1002,6 +1109,122 @@ void generateDungeonLevel(int WORLD_Y)
       storage[i].randBlocks[1].x = storage[i].startingX + randCubeX2;
       storage[i].randBlocks[1].y = WORLD_Y + 1;
       storage[i].randBlocks[1].z = storage[i].startingZ + randCubeZ2;
+   }
+
+   //Literally the dumbest but FULLY ERROR catching way to spawn the stairs without it EVER being missing
+   int chooseRoomForStairs = (rand() % 9);
+   int stairX = (rand() % ((storage[chooseRoomForStairs].xLength - offsetFromWall) - (offsetFromWall + 1) + 1)) + (offsetFromWall + 1);
+   int stairZ = (rand() % ((storage[chooseRoomForStairs].zLength - offsetFromWall) - (offsetFromWall + 1) + 1)) + (offsetFromWall + 1);
+
+   //printf("DOES THIS RUN??\n");
+
+   if (world[storage[chooseRoomForStairs].startingX + stairX][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ] == 0)
+   {
+      world[storage[chooseRoomForStairs].startingX + stairX][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ] = 5;
+
+      database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX;
+      database[1].stairGoingUp.y = WORLD_Y + 1;
+      database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ;
+
+      database[1].stairGoingDown.x = -1;
+      database[1].stairGoingDown.y = -1;
+      database[1].stairGoingDown.z = -1;
+   }
+   else if (world[storage[chooseRoomForStairs].startingX + stairX + 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ] == 0)
+   {
+      world[storage[chooseRoomForStairs].startingX + stairX + 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ] = 5;
+
+      database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX + 1;
+      database[1].stairGoingUp.y = WORLD_Y + 1;
+      database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ;
+
+      database[1].stairGoingDown.x = -1;
+      database[1].stairGoingDown.y = -1;
+      database[1].stairGoingDown.z = -1;
+   }
+   else if (world[storage[chooseRoomForStairs].startingX + stairX][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ + 1] == 0)
+   {
+      world[storage[chooseRoomForStairs].startingX + stairX][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ + 1] = 5;
+
+      database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX;
+      database[1].stairGoingUp.y = WORLD_Y + 1;
+      database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ + 1;
+
+      database[1].stairGoingDown.x = -1;
+      database[1].stairGoingDown.y = -1;
+      database[1].stairGoingDown.z = -1;
+   }
+   else if (world[storage[chooseRoomForStairs].startingX + stairX - 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ] == 0)
+   {
+      world[storage[chooseRoomForStairs].startingX + stairX - 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ] = 5;
+
+      database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX - 1;
+      database[1].stairGoingUp.y = WORLD_Y + 1;
+      database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ;
+
+      database[1].stairGoingDown.x = -1;
+      database[1].stairGoingDown.y = -1;
+      database[1].stairGoingDown.z = -1;
+   }
+   else if (world[storage[chooseRoomForStairs].startingX + stairX][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ - 1] == 0)
+   {
+      world[storage[chooseRoomForStairs].startingX + stairX][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ - 1] = 5;
+
+      database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX;
+      database[1].stairGoingUp.y = WORLD_Y + 1;
+      database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ - 1;
+
+      database[1].stairGoingDown.x = -1;
+      database[1].stairGoingDown.y = -1;
+      database[1].stairGoingDown.z = -1;
+   }
+   else if (world[storage[chooseRoomForStairs].startingX + stairX - 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ - 1] == 0)
+   {
+      world[storage[chooseRoomForStairs].startingX + stairX - 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ - 1] = 5;
+
+      database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX - 1;
+      database[1].stairGoingUp.y = WORLD_Y + 1;
+      database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ - 1;
+
+      database[1].stairGoingDown.x = -1;
+      database[1].stairGoingDown.y = -1;
+      database[1].stairGoingDown.z = -1;
+   }
+   else if (world[storage[chooseRoomForStairs].startingX + stairX + 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ + 1] == 0)
+   {
+      world[storage[chooseRoomForStairs].startingX + stairX + 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ + 1] = 5;
+
+      database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX + 1;
+      database[1].stairGoingUp.y = WORLD_Y + 1;
+      database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ + 1;
+
+      database[1].stairGoingDown.x = -1;
+      database[1].stairGoingDown.y = -1;
+      database[1].stairGoingDown.z = -1;
+   }
+   else if (world[storage[chooseRoomForStairs].startingX + stairX - 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ + 1] == 0)
+   {
+      world[storage[chooseRoomForStairs].startingX + stairX - 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ + 1] = 5;
+
+      database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX - 1;
+      database[1].stairGoingUp.y = WORLD_Y + 1;
+      database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ + 1;
+
+      database[1].stairGoingDown.x = -1;
+      database[1].stairGoingDown.y = -1;
+      database[1].stairGoingDown.z = -1;
+   }
+   else if (world[storage[chooseRoomForStairs].startingX + stairX + 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ - 1] == 0)
+   {
+      world[storage[chooseRoomForStairs].startingX + stairX + 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ - 1] = 5;
+
+      database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX + 1;
+      database[1].stairGoingUp.y = WORLD_Y + 1;
+      database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ - 1;
+
+      database[1].stairGoingDown.x = -1;
+      database[1].stairGoingDown.y = -1;
+      database[1].stairGoingDown.z = -1;
    }
 
    //THIS IS A TEST BLOCK FOR A2 PLEASE DONT MIND IT :((
@@ -4729,16 +4952,27 @@ void regenerateWorld(int regenerateThisWorld[100][50][100])
    }
 }
 
-void generateOutsideLevel(int WORLD_Y)
+void generateOutsideLevel(worldLevels database[2])
 {
    //i = X
    //k = Z
    int whiteColour = 10;
    int greenColour = 11;
    int brownColour = 12;
+   int downStairColour = 13;
 
    float tempt = 0;
    int perlin_Y;
+
+   srand(time(NULL));
+   //rng formula
+   //int rng = (rand() % (max - min + 1)) + min;
+   int stairX = (rand() % (80 - 20 + 1)) + 20;
+   int stairZ = (rand() % (80 - 20 + 1)) + 20;
+
+   //printf("RANDX: %d\n", randX);
+   //printf("RANDZ: %d\n", randZ);
+
    for (int i = 0; i < WORLDX; i++)
    {
       for (int k = 0; k < WORLDZ; k++)
@@ -4763,16 +4997,412 @@ void generateOutsideLevel(int WORLD_Y)
          {
             world[i][perlin_Y][k] = brownColour;
             world[i][perlin_Y - 1][k] = brownColour;
-            world[i][perlin_Y - 2][k] = brownColour;         
+            world[i][perlin_Y - 2][k] = brownColour;
+         }
+      }
+   }
+
+   for (int y = 0; y < WORLDY; y++)
+   {
+      if (world[stairX][y][stairZ] != 0 && world[stairX][y + 1][stairZ] == 0)
+      {
+         world[stairX][y + 1][stairZ] = downStairColour;
+         database[0].stairGoingDown.x = stairX;
+         database[0].stairGoingDown.y = y + 1;
+         database[0].stairGoingDown.z = stairZ;
+
+         database[0].stairGoingUp.x = -1;
+         database[0].stairGoingUp.y = -1;
+         database[0].stairGoingUp.z = -1;
+         break;
+      }
+   }
+}
+
+void goDownStairs(worldLevels database[2], float playerX, float playerY, float playerZ)
+{
+   int lengthOfDatabase = 2;
+
+   float newX;
+   float newY;
+   float newZ;
+
+   playerX = inverseValue(playerX);
+   playerY = inverseValue(playerY);
+   playerZ = inverseValue(playerZ);
+
+   //printf("TEST TEST TEST\n");
+
+   //Size is not set/determined and needs to be changed, haven't made a function to find the length of struct array yet
+   for (int i = 0; i < lengthOfDatabase - 1; i++)
+   {
+      //Check all values of player's x,y (+/-1), and z with the stair location in database
+
+      //printf("TEST TEST TEST420\n");
+      if ((database[i + 1].stairGoingDown.x != -1) && (database[i + 1].stairGoingDown.y != -1) && (database[i + 1].stairGoingDown.z != -1))
+      {
+         //printf("TEST TEST TEST69\n");
+         if (world[database[i + 1].stairGoingDown.x + 1][database[i + 1].stairGoingDown.y][database[i + 1].stairGoingDown.z] == 0)
+         {
+            newX = inverseValue((float)(database[i + 1].stairGoingDown.x + 1));
+            newY = inverseValue((float)(database[i + 1].stairGoingDown.y + 1));
+            newZ = inverseValue((float)(database[i + 1].stairGoingDown.z));
+            //printf("X: %0.2f Y: %0.2f Z: %0.2f \n", newX, newY, newZ);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST1\n");
+            break;
+         }
+         else if (world[database[i + 1].stairGoingDown.x - 1][database[i + 1].stairGoingDown.y][database[i + 1].stairGoingDown.z] == 0)
+         {
+            newX = inverseValue((float)(database[i + 1].stairGoingDown.x - 1));
+            newY = inverseValue((float)(database[i + 1].stairGoingDown.y + 1));
+            newZ = inverseValue((float)(database[i + 1].stairGoingDown.z));
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST2\n");
+            break;
+         }
+         else if (world[database[i + 1].stairGoingDown.x][database[i + 1].stairGoingDown.y][database[i + 1].stairGoingDown.z + 1] == 0)
+         {
+            newX = inverseValue((float)(database[i + 1].stairGoingDown.x));
+            newY = inverseValue((float)(database[i + 1].stairGoingDown.y + 1));
+            newZ = inverseValue((float)(database[i + 1].stairGoingDown.z) + 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST3\n");
+            break;
+         }
+         else if (world[database[i + 1].stairGoingDown.x][database[i + 1].stairGoingDown.y][database[i + 1].stairGoingDown.z - 1] == 0)
+         {
+            newX = inverseValue((float)(database[i + 1].stairGoingDown.x));
+            newY = inverseValue((float)(database[i + 1].stairGoingDown.y + 1));
+            newZ = inverseValue((float)(database[i + 1].stairGoingDown.z) - 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST4\n");
+            break;
+         }
+         else if (world[database[i + 1].stairGoingDown.x + 1][database[i + 1].stairGoingDown.y][database[i + 1].stairGoingDown.z + 1] == 0)
+         {
+            newX = inverseValue((float)(database[i + 1].stairGoingDown.x + 1));
+            newY = inverseValue((float)(database[i + 1].stairGoingDown.y + 1));
+            newZ = inverseValue((float)(database[i + 1].stairGoingDown.z) + 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST5\n");
+            break;
+         }
+         else if (world[database[i + 1].stairGoingDown.x - 1][database[i + 1].stairGoingDown.y][database[i + 1].stairGoingDown.z - 1] == 0)
+         {
+            newX = inverseValue((float)(database[i + 1].stairGoingDown.x - 1));
+            newY = inverseValue((float)(database[i + 1].stairGoingDown.y + 1));
+            newZ = inverseValue((float)(database[i + 1].stairGoingDown.z) - 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST6\n");
+            break;
+         }
+         else if (world[database[i + 1].stairGoingDown.x + 1][database[i + 1].stairGoingDown.y][database[i + 1].stairGoingDown.z - 1] == 0)
+         {
+            newX = inverseValue((float)(database[i + 1].stairGoingDown.x + 1));
+            newY = inverseValue((float)(database[i + 1].stairGoingDown.y + 1));
+            newZ = inverseValue((float)(database[i + 1].stairGoingDown.z) - 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST7\n");
+            break;
+         }
+         else if (world[database[i + 1].stairGoingDown.x - 1][database[i + 1].stairGoingDown.y][database[i + 1].stairGoingDown.z + 1] == 0)
+         {
+            newX = inverseValue((float)(database[i + 1].stairGoingDown.x - 1));
+            newY = inverseValue((float)(database[i + 1].stairGoingDown.y + 1));
+            newZ = inverseValue((float)(database[i + 1].stairGoingDown.z) + 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST7\n");
+            break;
+         }
+      }
+      else
+      {
+         if (world[database[i + 1].stairGoingUp.x + 1][database[i + 1].stairGoingUp.y][database[i + 1].stairGoingUp.z] == 0)
+         {
+            newX = inverseValue((float)(database[i + 1].stairGoingUp.x + 1));
+            newY = inverseValue((float)(database[i + 1].stairGoingUp.y + 1));
+            newZ = inverseValue((float)(database[i + 1].stairGoingUp.z));
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST8\n");
+            break;
+         }
+         else if (world[database[i + 1].stairGoingUp.x - 1][database[i + 1].stairGoingUp.y][database[i + 1].stairGoingUp.z] == 0)
+         {
+            newX = inverseValue((float)(database[i + 1].stairGoingUp.x - 1));
+            newY = inverseValue((float)(database[i + 1].stairGoingUp.y + 1));
+            newZ = inverseValue((float)(database[i + 1].stairGoingUp.z));
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST8\n");
+            break;
+         }
+         else if (world[database[i + 1].stairGoingUp.x][database[i + 1].stairGoingUp.y][database[i + 1].stairGoingUp.z + 1] == 0)
+         {
+            newX = inverseValue((float)(database[i + 1].stairGoingUp.x));
+            newY = inverseValue((float)(database[i + 1].stairGoingUp.y + 1));
+            newZ = inverseValue((float)(database[i + 1].stairGoingUp.z) + 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST9\n");
+            break;
+         }
+         else if (world[database[i + 1].stairGoingUp.x][database[i + 1].stairGoingUp.y][database[i + 1].stairGoingUp.z - 1] == 0)
+         {
+            newX = inverseValue((float)(database[i + 1].stairGoingUp.x));
+            newY = inverseValue((float)(database[i + 1].stairGoingUp.y + 1));
+            newZ = inverseValue((float)(database[i + 1].stairGoingUp.z) - 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST10\n");
+            break;
+         }
+         else if (world[database[i + 1].stairGoingUp.x + 1][database[i + 1].stairGoingUp.y][database[i + 1].stairGoingUp.z + 1] == 0)
+         {
+            newX = inverseValue((float)(database[i + 1].stairGoingUp.x + 1));
+            newY = inverseValue((float)(database[i + 1].stairGoingUp.y + 1));
+            newZ = inverseValue((float)(database[i + 1].stairGoingUp.z) + 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST11\n");
+            break;
+         }
+         else if (world[database[i + 1].stairGoingUp.x - 1][database[i + 1].stairGoingUp.y][database[i + 1].stairGoingUp.z - 1] == 0)
+         {
+            newX = inverseValue((float)(database[i + 1].stairGoingUp.x - 1));
+            newY = inverseValue((float)(database[i + 1].stairGoingUp.y + 1));
+            newZ = inverseValue((float)(database[i + 1].stairGoingUp.z) - 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST12\n");
+            break;
+         }
+         else if (world[database[i + 1].stairGoingUp.x + 1][database[i + 1].stairGoingUp.y][database[i + 1].stairGoingUp.z - 1] == 0)
+         {
+            newX = inverseValue((float)(database[i + 1].stairGoingUp.x + 1));
+            newY = inverseValue((float)(database[i + 1].stairGoingUp.y + 1));
+            newZ = inverseValue((float)(database[i + 1].stairGoingUp.z) - 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST13\n");
+            break;
+         }
+         else if (world[database[i + 1].stairGoingUp.x - 1][database[i + 1].stairGoingUp.y][database[i + 1].stairGoingUp.z + 1] == 0)
+         {
+            newX = inverseValue((float)(database[i + 1].stairGoingUp.x - 1));
+            newY = inverseValue((float)(database[i + 1].stairGoingUp.y + 1));
+            newZ = inverseValue((float)(database[i + 1].stairGoingUp.z) + 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST14\n");
+            break;
          }
       }
    }
 }
 
-void useStairs(float x, float y, float z)
+void goUpStairs(worldLevels database[2], float playerX, float playerY, float playerZ)
 {
+   int lengthOfDatabase = 2;
+
+   float newX;
+   float newY;
+   float newZ;
+
+   playerX = inverseValue(playerX);
+   playerY = inverseValue(playerY);
+   playerZ = inverseValue(playerZ);
+
+   //printf("TEST TEST TEST\n");
+
+   //Size is not set/determined and needs to be changed, haven't made a function to find the length of struct array yet
+   for (int i = lengthOfDatabase - 1; i > 0; i--)
+   {
+      //Check all values of player's x,y (+/-1), and z with the stair location in database
+
+      //printf("TEST TEST TEST420\n");
+      if ((database[i - 1].stairGoingUp.x != -1) && (database[i - 1].stairGoingUp.y != -1) && (database[i - 1].stairGoingUp.z != -1))
+      {
+         //printf("TEST TEST TEST69\n");
+         if (world[database[i - 1].stairGoingUp.x + 1][database[i - 1].stairGoingUp.y][database[i - 1].stairGoingUp.z] == 0)
+         {
+            newX = inverseValue((float)(database[i - 1].stairGoingUp.x + 1));
+            newY = inverseValue((float)(database[i - 1].stairGoingUp.y + 1));
+            newZ = inverseValue((float)(database[i - 1].stairGoingUp.z));
+
+            //printf("X: %0.2f Y: %0.2f Z: %0.2f \n", newX, newY, newZ);
+
+            setViewPosition(newX, newY, newZ);
+            printf("TEST TEST TEST1\n");
+            break;
+         }
+         else if (world[database[i - 1].stairGoingUp.x - 1][database[i - 1].stairGoingUp.y][database[i - 1].stairGoingUp.z] == 0)
+         {
+            newX = inverseValue((float)(database[i - 1].stairGoingUp.x - 1));
+            newY = inverseValue((float)(database[i - 1].stairGoingUp.y + 1));
+            newZ = inverseValue((float)(database[i - 1].stairGoingUp.z));
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST2\n");
+            break;
+         }
+         else if (world[database[i - 1].stairGoingUp.x][database[i - 1].stairGoingUp.y][database[i - 1].stairGoingUp.z + 1] == 0)
+         {
+            newX = inverseValue((float)(database[i - 1].stairGoingUp.x));
+            newY = inverseValue((float)(database[i - 1].stairGoingUp.y + 1));
+            newZ = inverseValue((float)(database[i - 1].stairGoingUp.z) + 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST3\n");
+            break;
+         }
+         else if (world[database[i - 1].stairGoingUp.x][database[i - 1].stairGoingUp.y][database[i - 1].stairGoingUp.z - 1] == 0)
+         {
+            newX = inverseValue((float)(database[i - 1].stairGoingUp.x));
+            newY = inverseValue((float)(database[i - 1].stairGoingUp.y + 1));
+            newZ = inverseValue((float)(database[i - 1].stairGoingUp.z) - 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST4\n");
+            break;
+         }
+         else if (world[database[i - 1].stairGoingUp.x + 1][database[i - 1].stairGoingUp.y][database[i - 1].stairGoingUp.z + 1] == 0)
+         {
+            newX = inverseValue((float)(database[i - 1].stairGoingUp.x + 1));
+            newY = inverseValue((float)(database[i - 1].stairGoingUp.y + 1));
+            newZ = inverseValue((float)(database[i - 1].stairGoingUp.z) + 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST5\n");
+            break;
+         }
+         else if (world[database[i - 1].stairGoingUp.x - 1][database[i - 1].stairGoingUp.y][database[i - 1].stairGoingUp.z - 1] == 0)
+         {
+            newX = inverseValue((float)(database[i - 1].stairGoingUp.x - 1));
+            newY = inverseValue((float)(database[i - 1].stairGoingUp.y + 1));
+            newZ = inverseValue((float)(database[i - 1].stairGoingUp.z) - 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST6\n");
+            break;
+         }
+         else if (world[database[i - 1].stairGoingUp.x + 1][database[i - 1].stairGoingUp.y][database[i - 1].stairGoingUp.z - 1] == 0)
+         {
+            newX = inverseValue((float)(database[i - 1].stairGoingUp.x + 1));
+            newY = inverseValue((float)(database[i - 1].stairGoingUp.y + 1));
+            newZ = inverseValue((float)(database[i - 1].stairGoingUp.z) - 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST7\n");
+            break;
+         }
+         else if (world[database[i - 1].stairGoingUp.x - 1][database[i - 1].stairGoingUp.y][database[i - 1].stairGoingUp.z + 1] == 0)
+         {
+            newX = inverseValue((float)(database[i - 1].stairGoingUp.x - 1));
+            newY = inverseValue((float)(database[i - 1].stairGoingUp.y + 1));
+            newZ = inverseValue((float)(database[i - 1].stairGoingUp.z) + 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST7\n");
+            break;
+         }
+      }
+      else
+      {
+         if (world[database[i - 1].stairGoingDown.x + 1][database[i - 1].stairGoingDown.y][database[i - 1].stairGoingDown.z] == 0)
+         {
+            newX = inverseValue((float)(database[i - 1].stairGoingDown.x + 1));
+            newY = inverseValue((float)(database[i - 1].stairGoingDown.y + 1));
+            newZ = inverseValue((float)(database[i - 1].stairGoingDown.z));
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST8\n");
+            break;
+         }
+         else if (world[database[i - 1].stairGoingDown.x - 1][database[i - 1].stairGoingDown.y][database[i - 1].stairGoingDown.z] == 0)
+         {
+            newX = inverseValue((float)(database[i - 1].stairGoingDown.x - 1));
+            newY = inverseValue((float)(database[i - 1].stairGoingDown.y + 1));
+            newZ = inverseValue((float)(database[i - 1].stairGoingDown.z));
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST8\n");
+            break;
+         }
+         else if (world[database[i - 1].stairGoingDown.x][database[i - 1].stairGoingDown.y][database[i - 1].stairGoingDown.z + 1] == 0)
+         {
+            newX = inverseValue((float)(database[i - 1].stairGoingDown.x));
+            newY = inverseValue((float)(database[i - 1].stairGoingDown.y + 1));
+            newZ = inverseValue((float)(database[i - 1].stairGoingDown.z) + 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST9\n");
+            break;
+         }
+         else if (world[database[i - 1].stairGoingDown.x][database[i - 1].stairGoingDown.y][database[i - 1].stairGoingDown.z - 1] == 0)
+         {
+            newX = inverseValue((float)(database[i - 1].stairGoingDown.x));
+            newY = inverseValue((float)(database[i - 1].stairGoingDown.y + 1));
+            newZ = inverseValue((float)(database[i - 1].stairGoingDown.z) - 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST10\n");
+            break;
+         }
+         else if (world[database[i - 1].stairGoingDown.x + 1][database[i - 1].stairGoingDown.y][database[i - 1].stairGoingDown.z + 1] == 0)
+         {
+            newX = inverseValue((float)(database[i - 1].stairGoingDown.x + 1));
+            newY = inverseValue((float)(database[i - 1].stairGoingDown.y + 1));
+            newZ = inverseValue((float)(database[i - 1].stairGoingDown.z) + 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST11\n");
+            break;
+         }
+         else if (world[database[i - 1].stairGoingDown.x - 1][database[i - 1].stairGoingDown.y][database[i - 1].stairGoingDown.z - 1] == 0)
+         {
+            newX = inverseValue((float)(database[i - 1].stairGoingDown.x - 1));
+            newY = inverseValue((float)(database[i - 1].stairGoingDown.y + 1));
+            newZ = inverseValue((float)(database[i - 1].stairGoingDown.z) - 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST12\n");
+            break;
+         }
+         else if (world[database[i - 1].stairGoingDown.x + 1][database[i - 1].stairGoingDown.y][database[i - 1].stairGoingDown.z - 1] == 0)
+         {
+            newX = inverseValue((float)(database[i - 1].stairGoingDown.x + 1));
+            newY = inverseValue((float)(database[i - 1].stairGoingDown.y + 1));
+            newZ = inverseValue((float)(database[i - 1].stairGoingDown.z) - 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST13\n");
+            break;
+         }
+         else if (world[database[i - 1].stairGoingDown.x - 1][database[i - 1].stairGoingDown.y][database[i - 1].stairGoingDown.z + 1] == 0)
+         {
+            newX = inverseValue((float)(database[i - 1].stairGoingDown.x - 1));
+            newY = inverseValue((float)(database[i - 1].stairGoingDown.y + 1));
+            newZ = inverseValue((float)(database[i - 1].stairGoingDown.z) + 1);
+            setViewPosition(newX, newY, newZ);
+            //printf("TEST TEST TEST14\n");
+            break;
+         }
+      }
+   }
 }
 
-void saveCurrentViewpoint(float x, float y, float z)
+void spawnBesideBlock(worldLevels database[2])
 {
+   if (world[database[0].stairGoingDown.x + 1][database[0].stairGoingDown.y][database[0].stairGoingDown.z] == 0)
+   {
+      setViewPosition((float)(-1 * database[0].stairGoingDown.x + 1), ((float)(-1 * database[0].stairGoingDown.y - 2)), ((float)(-1 * database[0].stairGoingDown.z)));
+   }
+   else if (world[database[0].stairGoingDown.x][database[0].stairGoingDown.y][database[0].stairGoingDown.z + 1] == 0)
+   {
+      setViewPosition((float)(-1 * database[0].stairGoingDown.x), ((float)(-1 * database[0].stairGoingDown.y - 2)), ((float)(-1 * database[0].stairGoingDown.z + 1)));
+   }
+   else if (world[database[0].stairGoingDown.x - 1][database[0].stairGoingDown.y][database[0].stairGoingDown.z] == 0)
+   {
+      setViewPosition((float)(-1 * database[0].stairGoingDown.x - 1), ((float)(-1 * database[0].stairGoingDown.y - 2)), ((float)(-1 * database[0].stairGoingDown.z)));
+   }
+   else if (world[database[0].stairGoingDown.x][database[0].stairGoingDown.y][database[0].stairGoingDown.z - 1] == 0)
+   {
+      setViewPosition((float)(-1 * database[0].stairGoingDown.x), ((float)(-1 * database[0].stairGoingDown.y - 2)), ((float)(-1 * database[0].stairGoingDown.z - 1)));
+   }
+   else if (world[database[0].stairGoingDown.x - 1][database[0].stairGoingDown.y][database[0].stairGoingDown.z - 1] == 0)
+   {
+      setViewPosition((float)(-1 * database[0].stairGoingDown.x - 1), ((float)(-1 * database[0].stairGoingDown.y - 2)), ((float)(-1 * database[0].stairGoingDown.z - 1)));
+   }
+   else if (world[database[0].stairGoingDown.x + 1][database[0].stairGoingDown.y][database[0].stairGoingDown.z - 1] == 0)
+   {
+      setViewPosition((float)(-1 * database[0].stairGoingDown.x + 1), ((float)(-1 * database[0].stairGoingDown.y - 2)), ((float)(-1 * database[0].stairGoingDown.z - 1)));
+   }
+   else if (world[database[0].stairGoingDown.x - 1][database[0].stairGoingDown.y][database[0].stairGoingDown.z + 1] == 0)
+   {
+      setViewPosition((float)(-1 * database[0].stairGoingDown.x - 1), ((float)(-1 * database[0].stairGoingDown.y - 2)), ((float)(-1 * database[0].stairGoingDown.z + 1)));
+   }
+   else if (world[database[0].stairGoingDown.x + 1][database[0].stairGoingDown.y][database[0].stairGoingDown.z - 1] == 0)
+   {
+      setViewPosition((float)(-1 * database[0].stairGoingDown.x + 1), ((float)(-1 * database[0].stairGoingDown.y - 2)), ((float)(-1 * database[0].stairGoingDown.z - 1)));
+   }
 }
