@@ -14,6 +14,7 @@
 #include <stdbool.h>
 
 #include "graphics.h"
+#include "functions.h"
 
 extern GLubyte world[WORLDX][WORLDY][WORLDZ];
 
@@ -142,14 +143,20 @@ typedef struct Room
    int xLength;
    int yLength;
    int zLength;
+
+   //I changed the way implemented storage so I think this is not needed
+   //==================================
    //Colours
-   int wallColour;  //6
-   int floorShade;  //69
-   int floorColour; //4
-   int cubeColour;  //3
-   int stairColour; //1
+   int wallColour;      //6
+   int floorShade;      //69
+   int floorColour;     //4
+   int cubeColour;      //3
+   int upStairColour;   //1
+   int downStairColour; //1
    //Height of hallway
    int hallwayHeight;
+   //==================================
+
    //The coords of the random blocks
    stairCoords stairs[1];
    //The coords of the random blocks
@@ -161,11 +168,28 @@ typedef struct Room
 
 Room storage[9];
 
-void initWorld(int WORLD_Y);
-void showWorldGrid();
-void generateLevel();
+typedef struct savedViewPoint
+{
+   float x;
+   float y;
+   float z;
+} savedViewPoint;
 
-//Helper functions to generateLevel - builds vertical bridges
+typedef struct worldLevels
+{
+   int savedWorld[100][50][100];
+   savedViewPoint playersLastPointInWorld;
+   Room *level;
+
+} worldLevels;
+
+worldLevels database[2];
+
+void initWorld();
+void showWorldGrid();
+void generateDungeonLevel(int WORLD_Y);
+
+//Helper functions to generateDungeonLevel - builds vertical bridges
 void buildHallwayFromRoom0ToRoom3(Room storage[9], int floorColour, int wallColour, int setHallWayWallHeight, int floorShade);
 void buildHallwayFromRoom1ToRoom4(Room storage[9], int floorColour, int wallColour, int setHallWayWallHeight, int floorShade);
 void buildHallwayFromRoom2ToRoom5(Room storage[9], int floorColour, int wallColour, int setHallWayWallHeight, int floorShade);
@@ -173,16 +197,26 @@ void buildHallwayFromRoom3ToRoom6(Room storage[9], int floorColour, int wallColo
 void buildHallwayFromRoom4ToRoom7(Room storage[9], int floorColour, int wallColour, int setHallWayWallHeight, int floorShade);
 void buildHallwayFromRoom5ToRoom8(Room storage[9], int floorColour, int wallColour, int setHallWayWallHeight, int floorShade);
 
-//Helper functions to generateLevel - builds horizontal bridges
+//Helper functions to generateDungeonLevel - builds horizontal bridges
 void buildHallwayFromRoom0ToRoom1(Room storage[9], int floorColour, int wallColour, int setHallWayWallHeight, int floorShade);
 void buildHallwayFromRoom1ToRoom2(Room storage[9], int floorColour, int wallColour, int setHallWayWallHeight, int floorShade);
 void buildHallwayFromRoom3ToRoom4(Room storage[9], int floorColour, int wallColour, int setHallWayWallHeight, int floorShade);
 void buildHallwayFromRoom4ToRoom5(Room storage[9], int floorColour, int wallColour, int setHallWayWallHeight, int floorShade);
 void buildHallwayFromRoom6ToRoom7(Room storage[9], int floorColour, int wallColour, int setHallWayWallHeight, int floorShade);
 void buildHallwayFromRoom7ToRoom8(Room storage[9], int floorColour, int wallColour, int setHallWayWallHeight, int floorShade);
+
+//Helper functions
 void setPlayerSpawnLocation();
 float inverseValue(float valueToInverse);
 bool checkAreaAroundViewPoint(float x, float y, float z);
+
+//A2 functions
+void generateOutsideLevel(int WORLD_Y);
+void useStairs(float x, float y, float z);
+void saveCurrentViewpoint(float x, float y, float z);
+
+void saveCurrentWorld(int saveWorldToThis[100][50][100]);
+void regenerateWorld(int regenerateThisWorld[100][50][100]);
 
 /*** collisionResponse() ***/
 /* -performs collision detection and response */
@@ -680,12 +714,16 @@ int main(int argc, char **argv)
       int WORLD_Y = 24;
       setUserColour(69, 0.909, 0.470, 0.737, 1.0, 0.909, 0.470, 0.737, 1.0);
 
-      initWorld(WORLD_Y);
+      initWorld();
       //showWorldGrid();
-      generateLevel(WORLD_Y);
+      generateDungeonLevel(WORLD_Y);
       //REMEBER TO TURN THESE OFF
       //setPlayerSpawnLocation();
       //flycontrol = 0;
+
+      saveCurrentWorld(database[0].savedWorld);
+      initWorld();
+      regenerateWorld(database[0].savedWorld);
    }
 
    /* starts the graphics processing loop */
@@ -694,7 +732,7 @@ int main(int argc, char **argv)
    return 0;
 }
 
-void initWorld(int WORLD_Y)
+void initWorld()
 {
    int i, j, k;
    /* initialize world to empty */
@@ -751,7 +789,7 @@ void showWorldGrid()
    world[99][25][99] = 8;
 }
 
-void generateLevel(int WORLD_Y)
+void generateDungeonLevel(int WORLD_Y)
 {
    //This function generate one single level, can be called more than once. (Made heading into A2)
 
@@ -782,7 +820,10 @@ void generateLevel(int WORLD_Y)
    int floorShade = 69;
    int floorColour = 4;
    int cubeColour = 3;
-   int stairColour = 1;
+
+   //These need to be different colours later
+   int upStairColour = 1;
+   int downStairColour = 1;
 
    //Choose room dimensions
    //This the max and min lengths of rooms
@@ -822,7 +863,8 @@ void generateLevel(int WORLD_Y)
       storage[i].floorShade = floorShade;
       storage[i].floorColour = floorColour;
       storage[i].cubeColour = cubeColour;
-      storage[i].stairColour = stairColour;
+      storage[i].upStairColour = upStairColour;
+      storage[i].downStairColour = downStairColour;
       storage[i].hallwayHeight = setHallWayWallHeight;
       storage[i].yLength = setRoomHeight;
    }
@@ -946,8 +988,6 @@ void generateLevel(int WORLD_Y)
       storage[i].randBlocks[1].y = WORLD_Y + 1;
       storage[i].randBlocks[1].z = storage[i].startingZ + randCubeZ2;
    }
-
-
 
    //THIS IS A TEST BLOCK FOR A2 PLEASE DONT MIND IT :((
    //=====================================================================================================================================================================================
@@ -4644,4 +4684,44 @@ void setPlayerSpawnLocation()
    //Set the spawn location of the player/viewer
    setViewPosition(spawnX, spawnY, spawnZ);
    setOldViewPosition(spawnX, spawnY, spawnZ);
+}
+
+void saveCurrentWorld(int saveWorldToThis[100][50][100])
+{
+   for (int i = 0; i < WORLDX; i++)
+   {
+      for (int j = 0; j < WORLDY; j++)
+      {
+         for (int k = 0; k < WORLDZ; k++)
+         {
+            saveWorldToThis[i][j][k] = world[i][j][k];
+         }
+      }
+   }
+}
+
+void regenerateWorld(int regenerateThisWorld[100][50][100])
+{
+   for (int i = 0; i < WORLDX; i++)
+   {
+      for (int j = 0; j < WORLDY; j++)
+      {
+         for (int k = 0; k < WORLDZ; k++)
+         {
+            world[i][j][k] = regenerateThisWorld[i][j][k];
+         }
+      }
+   }
+}
+
+void generateOutsideLevel(int WORLD_Y)
+{
+}
+
+void useStairs(float x, float y, float z)
+{
+}
+
+void saveCurrentViewpoint(float x, float y, float z)
+{
 }

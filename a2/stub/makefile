@@ -48,8 +48,8 @@
 # on your distribution.
 LIBS = -lGL -lGLU -lglut -lm -D__LINUX__
 
-a1: a1.c graphics.c visible.c functions.c graphics.h functions.h
-	gcc a1.c graphics.c visible.c functions.c -o a1 $(LIBS)
+a1: a1.c graphics.c visible.c functions.c perlin.c graphics.h functions.h
+	gcc a1.c graphics.c visible.c functions.c perlin.c -o a1 $(LIBS)
 
 # a1: a1.c graphics.c visible.c graphics.h
 #	gcc a1.c graphics.c visible.c -o a1 $(LIBS)
