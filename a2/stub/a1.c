@@ -15,6 +15,7 @@
 
 #include "graphics.h"
 #include "functions.h"
+#include "perlin.h"
 
 extern GLubyte world[WORLDX][WORLDY][WORLDZ];
 
@@ -418,19 +419,19 @@ bool checkAreaAroundViewPoint(float x, float y, float z)
    {
       return true;
    }
-   else if (world[(int)(x + 0.3)][(int)y][(int)(z - 0.3)] != 0)
+   else if (world[(int)(x + 0.2)][(int)y][(int)(z - 0.2)] != 0)
    {
       return true;
    }
-   else if (world[(int)(x - 0.3)][(int)y][(int)(z + 0.3)] != 0)
+   else if (world[(int)(x - 0.2)][(int)y][(int)(z + 0.2)] != 0)
    {
       return true;
    }
-   else if (world[(int)(x - 0.3)][(int)y][(int)(z - 0.3)] != 0)
+   else if (world[(int)(x - 0.2)][(int)y][(int)(z - 0.2)] != 0)
    {
       return true;
    }
-   else if (world[(int)(x + 0.3)][(int)y][(int)(z + 0.3)] != 0)
+   else if (world[(int)(x + 0.2)][(int)y][(int)(z + 0.2)] != 0)
    {
       return true;
    }
@@ -712,18 +713,32 @@ int main(int argc, char **argv)
       /* your code to build the world goes here */
 
       int WORLD_Y = 24;
+      //Pinkish white colour = 69
       setUserColour(69, 0.909, 0.470, 0.737, 1.0, 0.909, 0.470, 0.737, 1.0);
+
+      //White colour = 10
+      //0.752, 0.725, 0.725
+      setUserColour(10, 0.752, 0.725, 0.725, 1.0, 0.752, 0.725, 0.725, 1.0);
+      //Green colour = 11
+      //0.078, 0.180, 0.086
+      setUserColour(11, 0.078, 0.180, 0.086, 1.0, 0.078, 0.180, 0.086, 1.0);
+      //Brown colour = 12
+      //0.250, 0.109, 0.109
+      setUserColour(12, 0.250, 0.109, 0.109, 1.0, 0.250, 0.109, 0.109, 1.0);
 
       initWorld();
       //showWorldGrid();
-      generateDungeonLevel(WORLD_Y);
-      //REMEBER TO TURN THESE OFF
+      //generateDungeonLevel(WORLD_Y);
+
+      //REMEBER TO UNCOMMENT THESE / UPDATE THEM
       //setPlayerSpawnLocation();
       //flycontrol = 0;
 
-      saveCurrentWorld(database[0].savedWorld);
-      initWorld();
-      regenerateWorld(database[0].savedWorld);
+      //THESE ARE TEST LINES
+      //saveCurrentWorld(database[0].savedWorld);
+      //initWorld();
+      //regenerateWorld(database[0].savedWorld);
+      generateOutsideLevel(WORLD_Y);
    }
 
    /* starts the graphics processing loop */
@@ -4716,6 +4731,42 @@ void regenerateWorld(int regenerateThisWorld[100][50][100])
 
 void generateOutsideLevel(int WORLD_Y)
 {
+   //i = X
+   //k = Z
+   int whiteColour = 10;
+   int greenColour = 11;
+   int brownColour = 12;
+
+   float tempt = 0;
+   int perlin_Y;
+   for (int i = 0; i < WORLDX; i++)
+   {
+      for (int k = 0; k < WORLDZ; k++)
+      {
+         //perlin2d(X, Z, FREQUENCY, DEPTH) * HEIGHT
+         tempt = perlin2d(i, k, 0.05, 2);
+         tempt = (tempt * 25);
+         perlin_Y = (int)round(tempt);
+         if (perlin_Y >= 20)
+         {
+            world[i][perlin_Y][k] = whiteColour;
+            world[i][perlin_Y - 1][k] = whiteColour;
+            world[i][perlin_Y - 2][k] = whiteColour;
+         }
+         else if (perlin_Y >= 10)
+         {
+            world[i][perlin_Y][k] = greenColour;
+            world[i][perlin_Y - 1][k] = greenColour;
+            world[i][perlin_Y - 2][k] = greenColour;
+         }
+         else
+         {
+            world[i][perlin_Y][k] = brownColour;
+            world[i][perlin_Y - 1][k] = brownColour;
+            world[i][perlin_Y - 2][k] = brownColour;         
+         }
+      }
+   }
 }
 
 void useStairs(float x, float y, float z)
