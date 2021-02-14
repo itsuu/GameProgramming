@@ -1,0 +1,4 @@
+'/mnt/d/Desktop - Hard Drive/U of G 2018 - 2023/Year 3/Winter 2021/CIS 4820/a2/stub'
+
+
+export DISPLAY=localhost:0

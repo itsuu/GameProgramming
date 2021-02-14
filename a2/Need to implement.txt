@@ -1,0 +1,20 @@
+Touch ups
+
+Add holder for random blocks
+Add holder for stairs
+Fix holders for generation
+
+Functions to make
+
+Move stuff into a file
+Read file
+Reset world to blank
+Regenerate world off read file
+
+Stairs viewpoint teleportation
+
+What to put into file
+
+World array or world anchors
+
+Decide later on which one to implement

@@ -1,0 +1,87 @@
+IMPORTANT NOTE: None of these instructions come with any sort of a guarantee. If you follow
+them and they end up causing any problems for you or your computer then it is entirely your responsibility.
+If your hard disk is wiped clean... it's your problem.
+If all of your assignments are deleted... it's your problem.
+If your computer stops working... it's your problem.
+
+If you are unsure of your ability to follow these instructions or to recover from any
+problems that might arise then you should not do any of the things listed on this page.
+If you do follow any of these instruction then make sure to BACKUP ALL OF
+THE IMPORTANT INFORMATION ON YOUR COMPUTER BEFORE YOU TRY ANY OF THESE INSTRUCTION.
+
+
+1. Installing the Linux Kernel on Windows 10
+--------------------------------------------
+The instructions to install a Linux kernel on Windows 10 are on the page at:
+
+https://docs.microsoft.com/en-us/windows/wsl/install-win10
+
+Follow all of the instructions to install the kernel on this page.
+
+Next, follow the link to the "Initializing a newly installed distro" page and
+follow all of those instructions.
+
+I used Ubuntu 18.04 LTS and it seemed to work well..
+
+
+2. Installing the Development Tools
+-----------------------------------
+You will need to install the compiler and libraries that are necessary for
+development and to use OpenGL. The libraries I used are:
+
+sudo apt install gcc
+sudo apt install ubuntu-desktop
+sudo apt install make
+sudo apt-get install mesa-utils
+sudo apt-get install freeglut3
+sudo apt-get install freeglut3-dev
+
+
+3. Install an X-server on Windows
+---------------------------------
+You will need to run a X-server on Windows that will display the output from the OpenGL
+program. You can find one named VcXsrv here:
+
+https://sourceforge.net/projects/vcxsrv/
+
+Download, install, and run this program.
+
+
+4. Set the Display
+------------------
+On the command line run the following:
+
+export DISPLAY=localhost:0
+
+You can put this in the shell startup file so it is executed every time you start a
+terminal window. This will save you from having to type it each time you open a terminal
+window.
+
+You can test if the installation works by running:
+glxgears
+on the command line. If it works then the gears should move quickly. If the gears
+move very slowly then the display is probably not connected to the X-server. 
+You can try to close the Linux terminal window and the VcXsrv and then restart them (don't forget to export the DISPLAY again).
+
+(The instructions for using OpenGL on Linux are originally from this page:
+https://github.com/microsoft/WSL/issues/2855 )
+
+
+5. Compiling with OpenGL on Linux
+----------------------------------
+The libraries you will need to compile to use OpenGL are:
+
+-lGL -lGLU -lglut
+
+These will most likely be located in a subdirectory of /usr/lib or /usr/local/lib. The subdirectory that contains them will probably have x86 in its name.
+
+The header files are:
+
+#include<GL/gl.h>
+#include<GL/glu.h>
+#include<GL/glut.h>
+
+The header files will most likely be located in /usr/include/GL.
+
+Note that different distributions of operating systems may move any of these files to different locations.
+
