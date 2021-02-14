@@ -105,7 +105,7 @@ typedef struct doorCoords
    int x;
    int y;
    int z;
-   //Height of the hallways
+   //Extension coords of the door to hallways
    int hallwayBeginningX;
    int hallwayBeginningY;
    int hallwayBeginningZ;
@@ -149,10 +149,10 @@ typedef struct Room
    int yLength;
    int zLength;
    //Colours
-   int wallColour; //6
-   int floorShade; //69
+   int wallColour;  //6
+   int floorShade;  //69
    int floorColour; //4
-   int cubeColour; //3
+   int cubeColour;  //3
    //The coords of the random blocks
    stairCoords stairs[1];
    //The coords of the random blocks
@@ -786,6 +786,14 @@ void generateLevel(int WORLD_Y)
    int floorColour = 4;
    int cubeColour = 3;
 
+   for (i = 0; i < 9; i++)
+   {
+      storage[i].wallColour = wallColour;
+      storage[i].floorShade = floorShade;
+      storage[i].floorColour = floorColour;
+      //storage[i].cubeColour = cubeColour;
+   }
+
    //Choose room dimensions
    //This the max and min lengths of rooms
    int maxDim = 15; //15 is max
@@ -927,7 +935,17 @@ void generateLevel(int WORLD_Y)
       //Puts a one or two cubes in each room depends on rng if there is 1 cube or two
       world[storage[i].startingX + randCubeX][WORLD_Y + 1][storage[i].startingZ + randCubeZ] = cubeColour;
       world[storage[i].startingX + randCubeX2][WORLD_Y + 1][storage[i].startingZ + randCubeZ2] = cubeColour;
+
+      storage[i].randBlocks[0].x = storage[i].startingX + randCubeX;
+      storage[i].randBlocks[0].y = WORLD_Y + 1;
+      storage[i].randBlocks[0].z = storage[i].startingZ + randCubeZ;
+
+      storage[i].randBlocks[1].x = storage[i].startingX + randCubeX2;
+      storage[i].randBlocks[1].y = WORLD_Y + 1;
+      storage[i].randBlocks[1].z = storage[i].startingZ + randCubeZ2;
    }
+
+
 
    //THIS IS A TEST BLOCK FOR A2 PLEASE DONT MIND IT :((
    //=====================================================================================================================================================================================
