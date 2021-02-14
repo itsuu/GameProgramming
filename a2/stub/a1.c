@@ -107,7 +107,7 @@ typedef struct doorCoords
    int z;
    //Height of the hallways
    int hallwayBeginningX;
-   int hallwayBeginningy;
+   int hallwayBeginningY;
    int hallwayBeginningZ;
    //Height of hallway
    int hallwayHeight;
@@ -149,10 +149,10 @@ typedef struct Room
    int yLength;
    int zLength;
    //Colours
-   int wallColour = 6;
-   int floorShade = 69;
-   int floorColour = 4;
-   int cubeColour = 3;
+   int wallColour; //6
+   int floorShade; //69
+   int floorColour; //4
+   int cubeColour; //3
    //The coords of the random blocks
    stairCoords stairs[1];
    //The coords of the random blocks
@@ -865,8 +865,8 @@ void generateLevel(int WORLD_Y)
       }
 
       //THIS IS A TEST LINE TO PRINT OUT THE ROOM ANCHORS
-      //world[storage[i].startingX][WORLD_Y + setRoomHeight][storage[i].startingZ] = 4;
-      //world[storage[i].startingX][WORLD_Y + setRoomHeight + 1][storage[i].startingZ] = floorShade;
+      world[storage[i].startingX][WORLD_Y + setRoomHeight][storage[i].startingZ] = floorColour;
+      world[storage[i].startingX][WORLD_Y + setRoomHeight + 1][storage[i].startingZ] = floorShade;
    }
 
    //Create the random room sizes
@@ -1065,9 +1065,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z + beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z + beginningHallLength;
 
                //Testing the new coordinate of the door
                //world[storage[i].Doors[j].x][storage[i].Doors[j].y + 5][storage[i].Doors[j].z] = 4;
@@ -1117,9 +1117,9 @@ void generateLevel(int WORLD_Y)
 
                //This is a test line
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x + beginningHallLength;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x + beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z;
 
                //Testing the new coordinate of the door
                //world[storage[i].Doors[j].x][storage[i].Doors[j].y][storage[i].Doors[j].z] = 4;
@@ -1174,9 +1174,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z + beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z + beginningHallLength;
             }
             else
             {
@@ -1222,9 +1222,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x - beginningHallLength;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x - beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z;
             }
          }
       }
@@ -1276,9 +1276,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z - beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z - beginningHallLength;
             }
             else
             {
@@ -1324,9 +1324,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x + beginningHallLength;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x + beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z;
             }
          }
       }
@@ -1378,9 +1378,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z - beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z - beginningHallLength;
             }
             else
             {
@@ -1426,9 +1426,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x - beginningHallLength;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x - beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z;
             }
          }
       }
@@ -1482,9 +1482,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z + beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z + beginningHallLength;
             }
             else if (j == 1)
             {
@@ -1530,9 +1530,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x + beginningHallLength;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x + beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z;
             }
             else
             {
@@ -1578,9 +1578,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x - beginningHallLength;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x - beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z;
             }
          }
       }
@@ -1632,9 +1632,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z - beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z - beginningHallLength;
             }
             else if (j == 1)
             {
@@ -1680,9 +1680,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x + beginningHallLength;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x + beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z;
             }
             else
             {
@@ -1728,9 +1728,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z + beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z + beginningHallLength;
             }
          }
       }
@@ -1782,9 +1782,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z - beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z - beginningHallLength;
             }
             else if (j == 1)
             {
@@ -1830,9 +1830,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x - beginningHallLength;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x - beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z;
             }
             else
             {
@@ -1878,9 +1878,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z + beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z + beginningHallLength;
             }
          }
       }
@@ -1932,9 +1932,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z - beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z - beginningHallLength;
             }
             else if (j == 1)
             {
@@ -1980,9 +1980,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x + beginningHallLength;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x + beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z;
             }
             else
             {
@@ -2028,9 +2028,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x - beginningHallLength;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x - beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z;
             }
          }
       }
@@ -2084,9 +2084,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z - beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z - beginningHallLength;
             }
             else if (j == 1)
             {
@@ -2132,9 +2132,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x - beginningHallLength;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x - beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z;
             }
             else if (j == 2)
             {
@@ -2180,9 +2180,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z + beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z + beginningHallLength;
             }
             else
             {
@@ -2228,9 +2228,9 @@ void generateLevel(int WORLD_Y)
                }
 
                //Adds the beginningHallLength to the X/Z coordinate of the door to move the coordinate to the tip of the hallway
-               storage[i].Doors[j].x = storage[i].Doors[j].x + beginningHallLength;
-               storage[i].Doors[j].y = storage[i].Doors[j].y;
-               storage[i].Doors[j].z = storage[i].Doors[j].z;
+               storage[i].Doors[j].hallwayBeginningX = storage[i].Doors[j].x + beginningHallLength;
+               storage[i].Doors[j].hallwayBeginningY = storage[i].Doors[j].y;
+               storage[i].Doors[j].hallwayBeginningZ = storage[i].Doors[j].z;
             }
          }
       }
@@ -2269,7 +2269,7 @@ void buildHallwayFromRoom0ToRoom3(Room storage[9], int floorColour, int wallColo
 {
    //ID: Room0 to Room3
    //Detection of a path across from the door
-   for (int check1 = storage[0].Doors[0].z + 1; check1 < storage[3].Doors[0].z + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 3
+   for (int check1 = storage[0].Doors[0].hallwayBeginningZ + 1; check1 < storage[3].Doors[0].hallwayBeginningZ + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 3
    {
       //Colour randomizer
       int randColour = (rand() % ((2 - 1) + 1)) + 1;
@@ -2277,12 +2277,12 @@ void buildHallwayFromRoom0ToRoom3(Room storage[9], int floorColour, int wallColo
       for (int check2 = storage[3].startingX; check2 < storage[3].startingX + storage[3].xLength; check2++) //This should be the range of the starting X and xLength of the connecting door which is the door of Room 3
       {
          //This is a test line
-         //world[check2][storage[0].Doors[0].y + 6][check1] = 4;
+         //world[check2][storage[0].Doors[0].hallwayBeginningY + 6][check1] = 4;
 
-         if (world[check2][storage[0].Doors[0].y][check1] != 0)
+         if (world[check2][storage[0].Doors[0].hallwayBeginningY][check1] != 0)
          {
             int stopX = check2; // + 1? Need a + 1 to accunt for the new walls added
-            int stopY = storage[0].Doors[0].y;
+            int stopY = storage[0].Doors[0].hallwayBeginningY;
             int stopZ = check1;
 
             //Fixed the position of the other door entrance to the bridge
@@ -2293,10 +2293,10 @@ void buildHallwayFromRoom0ToRoom3(Room storage[9], int floorColour, int wallColo
             //Builds the wall around the hallway - extends the walls by two from the starting end
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
-               world[storage[0].Doors[0].x - 1][storage[0].Doors[0].y + wallHeight][storage[0].Doors[0].z + 1] = wallColour;
-               world[storage[0].Doors[0].x + 1][storage[0].Doors[0].y + wallHeight][storage[0].Doors[0].z + 1] = wallColour;
-               world[storage[0].Doors[0].x - 1][storage[0].Doors[0].y + wallHeight][storage[0].Doors[0].z + 2] = wallColour;
-               world[storage[0].Doors[0].x + 1][storage[0].Doors[0].y + wallHeight][storage[0].Doors[0].z + 2] = wallColour;
+               world[storage[0].Doors[0].hallwayBeginningX - 1][storage[0].Doors[0].hallwayBeginningY + wallHeight][storage[0].Doors[0].hallwayBeginningZ + 1] = wallColour;
+               world[storage[0].Doors[0].hallwayBeginningX + 1][storage[0].Doors[0].hallwayBeginningY + wallHeight][storage[0].Doors[0].hallwayBeginningZ + 1] = wallColour;
+               world[storage[0].Doors[0].hallwayBeginningX - 1][storage[0].Doors[0].hallwayBeginningY + wallHeight][storage[0].Doors[0].hallwayBeginningZ + 2] = wallColour;
+               world[storage[0].Doors[0].hallwayBeginningX + 1][storage[0].Doors[0].hallwayBeginningY + wallHeight][storage[0].Doors[0].hallwayBeginningZ + 2] = wallColour;
 
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
                world[fixedStopX + 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
@@ -2306,11 +2306,11 @@ void buildHallwayFromRoom0ToRoom3(Room storage[9], int floorColour, int wallColo
 
             //Build the sideways bridge
             //Leftside, rightside or equal case check
-            if (storage[0].Doors[0].x < fixedStopX)
+            if (storage[0].Doors[0].hallwayBeginningX < fixedStopX)
             {
                //Rightside case
                //build postive x
-               for (int build = storage[0].Doors[0].x; build <= fixedStopX; build++)
+               for (int build = storage[0].Doors[0].hallwayBeginningX; build <= fixedStopX; build++)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[build][stopY][stopZ] = floorColour;
@@ -2342,11 +2342,11 @@ void buildHallwayFromRoom0ToRoom3(Room storage[9], int floorColour, int wallColo
                   world[build][stopY + setHallWayWallHeight - 1][stopZ] = wallColour;
                }
             }
-            else if (storage[0].Doors[0].x > fixedStopX)
+            else if (storage[0].Doors[0].hallwayBeginningX > fixedStopX)
             {
                //Leftside case
                //build negative x
-               for (int build = storage[0].Doors[0].x; build >= fixedStopX; build--)
+               for (int build = storage[0].Doors[0].hallwayBeginningX; build >= fixedStopX; build--)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[build][stopY][stopZ] = floorColour;
@@ -2384,13 +2384,13 @@ void buildHallwayFromRoom0ToRoom3(Room storage[9], int floorColour, int wallColo
             }
 
             //Fixing the door entrance to the bridge
-            world[storage[0].Doors[0].x][storage[0].Doors[0].y][storage[0].Doors[0].z] = floorColour;
+            world[storage[0].Doors[0].hallwayBeginningX][storage[0].Doors[0].hallwayBeginningY][storage[0].Doors[0].hallwayBeginningZ] = floorColour;
             world[fixedStopX][fixedStopY][fixedStopZ] = floorColour;
 
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
                //Clears the entrance to the bridge
-               world[storage[0].Doors[0].x][storage[0].Doors[0].y + 1 + wallHeight][storage[0].Doors[0].z] = 0;
+               world[storage[0].Doors[0].hallwayBeginningX][storage[0].Doors[0].hallwayBeginningY + 1 + wallHeight][storage[0].Doors[0].hallwayBeginningZ] = 0;
 
                //This is a test line
                //world[fixedStopX][fixedStopY + 5 + wallHeight][fixedStopZ] = 4;
@@ -2399,7 +2399,7 @@ void buildHallwayFromRoom0ToRoom3(Room storage[9], int floorColour, int wallColo
             }
 
             //Build the ceiling to the hallway's bridge
-            world[storage[0].Doors[0].x][storage[0].Doors[0].y + setHallWayWallHeight - 1][storage[0].Doors[0].z] = wallColour;
+            world[storage[0].Doors[0].hallwayBeginningX][storage[0].Doors[0].hallwayBeginningY + setHallWayWallHeight - 1][storage[0].Doors[0].hallwayBeginningZ] = wallColour;
             world[fixedStopX][fixedStopY + setHallWayWallHeight - 1][fixedStopZ] = wallColour;
 
             return;
@@ -2407,57 +2407,57 @@ void buildHallwayFromRoom0ToRoom3(Room storage[9], int floorColour, int wallColo
       }
 
       //Increases the hallway length by one
-      storage[0].Doors[0].z = storage[0].Doors[0].z + 1;
-      //world[storage[0].Doors[0].x][storage[0].Doors[0].y][storage[0].Doors[0].z] = floorColour;
+      storage[0].Doors[0].hallwayBeginningZ = storage[0].Doors[0].hallwayBeginningZ + 1;
+      //world[storage[0].Doors[0].hallwayBeginningX][storage[0].Doors[0].hallwayBeginningY][storage[0].Doors[0].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[0].Doors[0].x][storage[0].Doors[0].y][storage[0].Doors[0].z] = floorShade;
+         world[storage[0].Doors[0].hallwayBeginningX][storage[0].Doors[0].hallwayBeginningY][storage[0].Doors[0].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[0].Doors[0].x][storage[0].Doors[0].y][storage[0].Doors[0].z] = floorColour;
+         world[storage[0].Doors[0].hallwayBeginningX][storage[0].Doors[0].hallwayBeginningY][storage[0].Doors[0].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[0].Doors[0].x][storage[0].Doors[0].y + setHallWayWallHeight - 1][storage[0].Doors[0].z] = wallColour;
+      world[storage[0].Doors[0].hallwayBeginningX][storage[0].Doors[0].hallwayBeginningY + setHallWayWallHeight - 1][storage[0].Doors[0].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[0].Doors[0].x - 1][storage[0].Doors[0].y + wallHeight][storage[0].Doors[0].z] = wallColour;
-         world[storage[0].Doors[0].x + 1][storage[0].Doors[0].y + wallHeight][storage[0].Doors[0].z] = wallColour;
+         world[storage[0].Doors[0].hallwayBeginningX - 1][storage[0].Doors[0].hallwayBeginningY + wallHeight][storage[0].Doors[0].hallwayBeginningZ] = wallColour;
+         world[storage[0].Doors[0].hallwayBeginningX + 1][storage[0].Doors[0].hallwayBeginningY + wallHeight][storage[0].Doors[0].hallwayBeginningZ] = wallColour;
 
-         //world[storage[0].Doors[0].x][storage[0].Doors[0].y + 1 + wallHeight][storage[0].Doors[0].z] = 0;
+         //world[storage[0].Doors[0].hallwayBeginningX][storage[0].Doors[0].hallwayBeginningY + 1 + wallHeight][storage[0].Doors[0].hallwayBeginningZ] = 0;
       }
 
       //Increases the opposite hallway of the top door by one towards the top door
-      storage[3].Doors[0].z = storage[3].Doors[0].z - 1;
-      //world[storage[3].Doors[0].x][storage[3].Doors[0].y][storage[3].Doors[0].z] = floorColour;
+      storage[3].Doors[0].hallwayBeginningZ = storage[3].Doors[0].hallwayBeginningZ - 1;
+      //world[storage[3].Doors[0].hallwayBeginningX][storage[3].Doors[0].hallwayBeginningY][storage[3].Doors[0].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[3].Doors[0].x][storage[3].Doors[0].y][storage[3].Doors[0].z] = floorShade;
+         world[storage[3].Doors[0].hallwayBeginningX][storage[3].Doors[0].hallwayBeginningY][storage[3].Doors[0].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[3].Doors[0].x][storage[3].Doors[0].y][storage[3].Doors[0].z] = floorColour;
+         world[storage[3].Doors[0].hallwayBeginningX][storage[3].Doors[0].hallwayBeginningY][storage[3].Doors[0].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[3].Doors[0].x][storage[3].Doors[0].y + setHallWayWallHeight - 1][storage[3].Doors[0].z] = wallColour;
+      world[storage[3].Doors[0].hallwayBeginningX][storage[3].Doors[0].hallwayBeginningY + setHallWayWallHeight - 1][storage[3].Doors[0].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[3].Doors[0].x - 1][storage[3].Doors[0].y + wallHeight][storage[3].Doors[0].z] = wallColour;
-         world[storage[3].Doors[0].x + 1][storage[3].Doors[0].y + wallHeight][storage[3].Doors[0].z] = wallColour;
+         world[storage[3].Doors[0].hallwayBeginningX - 1][storage[3].Doors[0].hallwayBeginningY + wallHeight][storage[3].Doors[0].hallwayBeginningZ] = wallColour;
+         world[storage[3].Doors[0].hallwayBeginningX + 1][storage[3].Doors[0].hallwayBeginningY + wallHeight][storage[3].Doors[0].hallwayBeginningZ] = wallColour;
 
-         //world[storage[3].Doors[0].x][storage[3].Doors[0].y + 1 + wallHeight][storage[3].Doors[0].z] = 0;
+         //world[storage[3].Doors[0].hallwayBeginningX][storage[3].Doors[0].hallwayBeginningY + 1 + wallHeight][storage[3].Doors[0].hallwayBeginningZ] = 0;
       }
    }
 }
@@ -2466,7 +2466,7 @@ void buildHallwayFromRoom1ToRoom4(Room storage[9], int floorColour, int wallColo
 {
    //ID: Room1 to Room4
    //Detection of a path across from the door
-   for (int check1 = storage[1].Doors[0].z + 1; check1 < storage[4].Doors[0].z + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 4
+   for (int check1 = storage[1].Doors[0].hallwayBeginningZ + 1; check1 < storage[4].Doors[0].hallwayBeginningZ + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 4
    {
       //Colour randomizer
       int randColour = (rand() % ((2 - 1) + 1)) + 1;
@@ -2474,12 +2474,12 @@ void buildHallwayFromRoom1ToRoom4(Room storage[9], int floorColour, int wallColo
       for (int check2 = storage[4].startingX; check2 < storage[4].startingX + storage[4].xLength; check2++) //This should be the range of the starting X and xLength of the connecting door which is the door of Room 4
       {
          //This is a test line
-         //world[check2][storage[0].Doors[0].y + 6][check1] = 4;
+         //world[check2][storage[0].Doors[0].hallwayBeginningY + 6][check1] = 4;
 
-         if (world[check2][storage[1].Doors[0].y][check1] != 0)
+         if (world[check2][storage[1].Doors[0].hallwayBeginningY][check1] != 0)
          {
             int stopX = check2; // + 1? Need a + 1 to accunt for the new walls added
-            int stopY = storage[1].Doors[0].y;
+            int stopY = storage[1].Doors[0].hallwayBeginningY;
             int stopZ = check1;
 
             //Fixed the position of the other door entrance to the bridge
@@ -2490,10 +2490,10 @@ void buildHallwayFromRoom1ToRoom4(Room storage[9], int floorColour, int wallColo
             //Builds the wall around the hallway - extends the walls by two from the starting end
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
-               world[storage[1].Doors[0].x - 1][storage[1].Doors[0].y + wallHeight][storage[1].Doors[0].z + 1] = wallColour;
-               world[storage[1].Doors[0].x + 1][storage[1].Doors[0].y + wallHeight][storage[1].Doors[0].z + 1] = wallColour;
-               world[storage[1].Doors[0].x - 1][storage[1].Doors[0].y + wallHeight][storage[1].Doors[0].z + 2] = wallColour;
-               world[storage[1].Doors[0].x + 1][storage[1].Doors[0].y + wallHeight][storage[1].Doors[0].z + 2] = wallColour;
+               world[storage[1].Doors[0].hallwayBeginningX - 1][storage[1].Doors[0].hallwayBeginningY + wallHeight][storage[1].Doors[0].hallwayBeginningZ + 1] = wallColour;
+               world[storage[1].Doors[0].hallwayBeginningX + 1][storage[1].Doors[0].hallwayBeginningY + wallHeight][storage[1].Doors[0].hallwayBeginningZ + 1] = wallColour;
+               world[storage[1].Doors[0].hallwayBeginningX - 1][storage[1].Doors[0].hallwayBeginningY + wallHeight][storage[1].Doors[0].hallwayBeginningZ + 2] = wallColour;
+               world[storage[1].Doors[0].hallwayBeginningX + 1][storage[1].Doors[0].hallwayBeginningY + wallHeight][storage[1].Doors[0].hallwayBeginningZ + 2] = wallColour;
 
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
                world[fixedStopX + 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
@@ -2503,11 +2503,11 @@ void buildHallwayFromRoom1ToRoom4(Room storage[9], int floorColour, int wallColo
 
             //Build the sideways bridge
             //Leftside, rightside or equal case check
-            if (storage[1].Doors[0].x < fixedStopX)
+            if (storage[1].Doors[0].hallwayBeginningX < fixedStopX)
             {
                //Rightside case
                //build postive x
-               for (int build = storage[1].Doors[0].x; build <= fixedStopX; build++)
+               for (int build = storage[1].Doors[0].hallwayBeginningX; build <= fixedStopX; build++)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[build][stopY][stopZ] = floorColour;
@@ -2540,11 +2540,11 @@ void buildHallwayFromRoom1ToRoom4(Room storage[9], int floorColour, int wallColo
                   world[build][stopY + setHallWayWallHeight - 1][stopZ] = wallColour;
                }
             }
-            else if (storage[1].Doors[0].x > fixedStopX)
+            else if (storage[1].Doors[0].hallwayBeginningX > fixedStopX)
             {
                //Leftside case
                //build negative x
-               for (int build = storage[1].Doors[0].x; build >= fixedStopX; build--)
+               for (int build = storage[1].Doors[0].hallwayBeginningX; build >= fixedStopX; build--)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[build][stopY][stopZ] = floorColour;
@@ -2582,13 +2582,13 @@ void buildHallwayFromRoom1ToRoom4(Room storage[9], int floorColour, int wallColo
             }
 
             //Fixing the door entrance to the bridge
-            world[storage[1].Doors[0].x][storage[1].Doors[0].y][storage[1].Doors[0].z] = floorColour;
+            world[storage[1].Doors[0].hallwayBeginningX][storage[1].Doors[0].hallwayBeginningY][storage[1].Doors[0].hallwayBeginningZ] = floorColour;
             world[fixedStopX][fixedStopY][fixedStopZ] = floorColour;
 
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
                //Clears the entrance to the bridge
-               world[storage[1].Doors[0].x][storage[1].Doors[0].y + 1 + wallHeight][storage[1].Doors[0].z] = 0;
+               world[storage[1].Doors[0].hallwayBeginningX][storage[1].Doors[0].hallwayBeginningY + 1 + wallHeight][storage[1].Doors[0].hallwayBeginningZ] = 0;
 
                //This is a test line
                //world[fixedStopX][fixedStopY + 5 + wallHeight][fixedStopZ] = 4;
@@ -2597,7 +2597,7 @@ void buildHallwayFromRoom1ToRoom4(Room storage[9], int floorColour, int wallColo
             }
 
             //Build the ceiling to the hallway's bridge
-            world[storage[1].Doors[0].x][storage[1].Doors[0].y + setHallWayWallHeight - 1][storage[1].Doors[0].z] = wallColour;
+            world[storage[1].Doors[0].hallwayBeginningX][storage[1].Doors[0].hallwayBeginningY + setHallWayWallHeight - 1][storage[1].Doors[0].hallwayBeginningZ] = wallColour;
             world[fixedStopX][fixedStopY + setHallWayWallHeight - 1][fixedStopZ] = wallColour;
 
             return;
@@ -2605,53 +2605,53 @@ void buildHallwayFromRoom1ToRoom4(Room storage[9], int floorColour, int wallColo
       }
 
       //Increases the hallway length by one
-      storage[1].Doors[0].z = storage[1].Doors[0].z + 1;
-      //world[storage[1].Doors[0].x][storage[1].Doors[0].y][storage[1].Doors[0].z] = floorColour;
+      storage[1].Doors[0].hallwayBeginningZ = storage[1].Doors[0].hallwayBeginningZ + 1;
+      //world[storage[1].Doors[0].hallwayBeginningX][storage[1].Doors[0].hallwayBeginningY][storage[1].Doors[0].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[1].Doors[0].x][storage[1].Doors[0].y][storage[1].Doors[0].z] = floorShade;
+         world[storage[1].Doors[0].hallwayBeginningX][storage[1].Doors[0].hallwayBeginningY][storage[1].Doors[0].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[1].Doors[0].x][storage[1].Doors[0].y][storage[1].Doors[0].z] = floorColour;
+         world[storage[1].Doors[0].hallwayBeginningX][storage[1].Doors[0].hallwayBeginningY][storage[1].Doors[0].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[1].Doors[0].x][storage[1].Doors[0].y + setHallWayWallHeight - 1][storage[1].Doors[0].z] = wallColour;
+      world[storage[1].Doors[0].hallwayBeginningX][storage[1].Doors[0].hallwayBeginningY + setHallWayWallHeight - 1][storage[1].Doors[0].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[1].Doors[0].x - 1][storage[1].Doors[0].y + wallHeight][storage[1].Doors[0].z] = wallColour;
-         world[storage[1].Doors[0].x + 1][storage[1].Doors[0].y + wallHeight][storage[1].Doors[0].z] = wallColour;
+         world[storage[1].Doors[0].hallwayBeginningX - 1][storage[1].Doors[0].hallwayBeginningY + wallHeight][storage[1].Doors[0].hallwayBeginningZ] = wallColour;
+         world[storage[1].Doors[0].hallwayBeginningX + 1][storage[1].Doors[0].hallwayBeginningY + wallHeight][storage[1].Doors[0].hallwayBeginningZ] = wallColour;
       }
 
       //Increases the opposite hallway of the top door by one towards the top door
-      storage[4].Doors[0].z = storage[4].Doors[0].z - 1;
-      //world[storage[4].Doors[0].x][storage[4].Doors[0].y][storage[4].Doors[0].z] = floorColour;
+      storage[4].Doors[0].hallwayBeginningZ = storage[4].Doors[0].hallwayBeginningZ - 1;
+      //world[storage[4].Doors[0].hallwayBeginningX][storage[4].Doors[0].hallwayBeginningY][storage[4].Doors[0].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[4].Doors[0].x][storage[4].Doors[0].y][storage[4].Doors[0].z] = floorShade;
+         world[storage[4].Doors[0].hallwayBeginningX][storage[4].Doors[0].hallwayBeginningY][storage[4].Doors[0].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[4].Doors[0].x][storage[4].Doors[0].y][storage[4].Doors[0].z] = floorColour;
+         world[storage[4].Doors[0].hallwayBeginningX][storage[4].Doors[0].hallwayBeginningY][storage[4].Doors[0].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[4].Doors[0].x][storage[4].Doors[0].y + setHallWayWallHeight - 1][storage[4].Doors[0].z] = wallColour;
+      world[storage[4].Doors[0].hallwayBeginningX][storage[4].Doors[0].hallwayBeginningY + setHallWayWallHeight - 1][storage[4].Doors[0].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[4].Doors[0].x - 1][storage[4].Doors[0].y + wallHeight][storage[4].Doors[0].z] = wallColour;
-         world[storage[4].Doors[0].x + 1][storage[4].Doors[0].y + wallHeight][storage[4].Doors[0].z] = wallColour;
+         world[storage[4].Doors[0].hallwayBeginningX - 1][storage[4].Doors[0].hallwayBeginningY + wallHeight][storage[4].Doors[0].hallwayBeginningZ] = wallColour;
+         world[storage[4].Doors[0].hallwayBeginningX + 1][storage[4].Doors[0].hallwayBeginningY + wallHeight][storage[4].Doors[0].hallwayBeginningZ] = wallColour;
       }
    }
 }
@@ -2660,7 +2660,7 @@ void buildHallwayFromRoom2ToRoom5(Room storage[9], int floorColour, int wallColo
 {
    //ID: Room2 to Room5
    //Detection of a path across from the door
-   for (int check1 = storage[2].Doors[0].z + 1; check1 < storage[5].Doors[0].z + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 5
+   for (int check1 = storage[2].Doors[0].hallwayBeginningZ + 1; check1 < storage[5].Doors[0].hallwayBeginningZ + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 5
    {
       //Colour randomizer
       int randColour = (rand() % ((2 - 1) + 1)) + 1;
@@ -2668,12 +2668,12 @@ void buildHallwayFromRoom2ToRoom5(Room storage[9], int floorColour, int wallColo
       for (int check2 = storage[5].startingX; check2 < storage[5].startingX + storage[5].xLength; check2++) //This should be the range of the starting X and xLength of the connecting door which is the door of Room 5
       {
          //This is a test line
-         //world[check2][storage[0].Doors[0].y + 6][check1] = 4;
+         //world[check2][storage[0].Doors[0].hallwayBeginningY + 6][check1] = 4;
 
-         if (world[check2][storage[2].Doors[0].y][check1] != 0)
+         if (world[check2][storage[2].Doors[0].hallwayBeginningY][check1] != 0)
          {
             int stopX = check2; // + 1? Need a + 1 to accunt for the new walls added
-            int stopY = storage[2].Doors[0].y;
+            int stopY = storage[2].Doors[0].hallwayBeginningY;
             int stopZ = check1;
 
             //Fixed the position of the other door entrance to the bridge
@@ -2684,10 +2684,10 @@ void buildHallwayFromRoom2ToRoom5(Room storage[9], int floorColour, int wallColo
             //Builds the wall around the hallway - extends the walls by two from the starting end
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
-               world[storage[2].Doors[0].x - 1][storage[2].Doors[0].y + wallHeight][storage[2].Doors[0].z + 1] = wallColour;
-               world[storage[2].Doors[0].x + 1][storage[2].Doors[0].y + wallHeight][storage[2].Doors[0].z + 1] = wallColour;
-               world[storage[2].Doors[0].x - 1][storage[2].Doors[0].y + wallHeight][storage[2].Doors[0].z + 2] = wallColour;
-               world[storage[2].Doors[0].x + 1][storage[2].Doors[0].y + wallHeight][storage[2].Doors[0].z + 2] = wallColour;
+               world[storage[2].Doors[0].hallwayBeginningX - 1][storage[2].Doors[0].hallwayBeginningY + wallHeight][storage[2].Doors[0].hallwayBeginningZ + 1] = wallColour;
+               world[storage[2].Doors[0].hallwayBeginningX + 1][storage[2].Doors[0].hallwayBeginningY + wallHeight][storage[2].Doors[0].hallwayBeginningZ + 1] = wallColour;
+               world[storage[2].Doors[0].hallwayBeginningX - 1][storage[2].Doors[0].hallwayBeginningY + wallHeight][storage[2].Doors[0].hallwayBeginningZ + 2] = wallColour;
+               world[storage[2].Doors[0].hallwayBeginningX + 1][storage[2].Doors[0].hallwayBeginningY + wallHeight][storage[2].Doors[0].hallwayBeginningZ + 2] = wallColour;
 
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
                world[fixedStopX + 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
@@ -2697,11 +2697,11 @@ void buildHallwayFromRoom2ToRoom5(Room storage[9], int floorColour, int wallColo
 
             //Build the sideways bridge
             //Leftside, rightside or equal case check
-            if (storage[2].Doors[0].x < fixedStopX)
+            if (storage[2].Doors[0].hallwayBeginningX < fixedStopX)
             {
                //Rightside case
                //build postive x
-               for (int build = storage[2].Doors[0].x; build <= fixedStopX; build++)
+               for (int build = storage[2].Doors[0].hallwayBeginningX; build <= fixedStopX; build++)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[build][stopY][stopZ] = floorColour;
@@ -2734,11 +2734,11 @@ void buildHallwayFromRoom2ToRoom5(Room storage[9], int floorColour, int wallColo
                   world[build][stopY + setHallWayWallHeight - 1][stopZ] = wallColour;
                }
             }
-            else if (storage[2].Doors[0].x > fixedStopX)
+            else if (storage[2].Doors[0].hallwayBeginningX > fixedStopX)
             {
                //Leftside case
                //build negative x
-               for (int build = storage[2].Doors[0].x; build >= fixedStopX; build--)
+               for (int build = storage[2].Doors[0].hallwayBeginningX; build >= fixedStopX; build--)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[build][stopY][stopZ] = floorColour;
@@ -2776,13 +2776,13 @@ void buildHallwayFromRoom2ToRoom5(Room storage[9], int floorColour, int wallColo
             }
 
             //Fixing the door entrance to the bridge
-            world[storage[2].Doors[0].x][storage[2].Doors[0].y][storage[2].Doors[0].z] = floorColour;
+            world[storage[2].Doors[0].hallwayBeginningX][storage[2].Doors[0].hallwayBeginningY][storage[2].Doors[0].hallwayBeginningZ] = floorColour;
             world[fixedStopX][fixedStopY][fixedStopZ] = floorColour;
 
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
                //Clears the entrance to the bridge
-               world[storage[2].Doors[0].x][storage[2].Doors[0].y + 1 + wallHeight][storage[2].Doors[0].z] = 0;
+               world[storage[2].Doors[0].hallwayBeginningX][storage[2].Doors[0].hallwayBeginningY + 1 + wallHeight][storage[2].Doors[0].hallwayBeginningZ] = 0;
 
                //This is a test line
                //world[fixedStopX][fixedStopY + 5 + wallHeight][fixedStopZ] = 4;
@@ -2791,7 +2791,7 @@ void buildHallwayFromRoom2ToRoom5(Room storage[9], int floorColour, int wallColo
             }
 
             //Build the ceiling to the hallway's bridge
-            world[storage[2].Doors[0].x][storage[2].Doors[0].y + setHallWayWallHeight - 1][storage[2].Doors[0].z] = wallColour;
+            world[storage[2].Doors[0].hallwayBeginningX][storage[2].Doors[0].hallwayBeginningY + setHallWayWallHeight - 1][storage[2].Doors[0].hallwayBeginningZ] = wallColour;
             world[fixedStopX][fixedStopY + setHallWayWallHeight - 1][fixedStopZ] = wallColour;
 
             return;
@@ -2799,53 +2799,53 @@ void buildHallwayFromRoom2ToRoom5(Room storage[9], int floorColour, int wallColo
       }
 
       //Increases the hallway length by one
-      storage[2].Doors[0].z = storage[2].Doors[0].z + 1;
-      //world[storage[2].Doors[0].x][storage[2].Doors[0].y][storage[2].Doors[0].z] = floorColour;
+      storage[2].Doors[0].hallwayBeginningZ = storage[2].Doors[0].hallwayBeginningZ + 1;
+      //world[storage[2].Doors[0].hallwayBeginningX][storage[2].Doors[0].hallwayBeginningY][storage[2].Doors[0].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[2].Doors[0].x][storage[2].Doors[0].y][storage[2].Doors[0].z] = floorShade;
+         world[storage[2].Doors[0].hallwayBeginningX][storage[2].Doors[0].hallwayBeginningY][storage[2].Doors[0].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[2].Doors[0].x][storage[2].Doors[0].y][storage[2].Doors[0].z] = floorColour;
+         world[storage[2].Doors[0].hallwayBeginningX][storage[2].Doors[0].hallwayBeginningY][storage[2].Doors[0].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[2].Doors[0].x][storage[2].Doors[0].y + setHallWayWallHeight - 1][storage[2].Doors[0].z] = wallColour;
+      world[storage[2].Doors[0].hallwayBeginningX][storage[2].Doors[0].hallwayBeginningY + setHallWayWallHeight - 1][storage[2].Doors[0].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[2].Doors[0].x - 1][storage[2].Doors[0].y + wallHeight][storage[2].Doors[0].z] = wallColour;
-         world[storage[2].Doors[0].x + 1][storage[2].Doors[0].y + wallHeight][storage[2].Doors[0].z] = wallColour;
+         world[storage[2].Doors[0].hallwayBeginningX - 1][storage[2].Doors[0].hallwayBeginningY + wallHeight][storage[2].Doors[0].hallwayBeginningZ] = wallColour;
+         world[storage[2].Doors[0].hallwayBeginningX + 1][storage[2].Doors[0].hallwayBeginningY + wallHeight][storage[2].Doors[0].hallwayBeginningZ] = wallColour;
       }
 
       //Increases the opposite hallway of the top door by one towards the top door
-      storage[5].Doors[0].z = storage[5].Doors[0].z - 1;
-      //world[storage[5].Doors[0].x][storage[5].Doors[0].y][storage[5].Doors[0].z] = floorColour;
+      storage[5].Doors[0].hallwayBeginningZ = storage[5].Doors[0].hallwayBeginningZ - 1;
+      //world[storage[5].Doors[0].hallwayBeginningX][storage[5].Doors[0].hallwayBeginningY][storage[5].Doors[0].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[5].Doors[0].x][storage[5].Doors[0].y][storage[5].Doors[0].z] = floorShade;
+         world[storage[5].Doors[0].hallwayBeginningX][storage[5].Doors[0].hallwayBeginningY][storage[5].Doors[0].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[5].Doors[0].x][storage[5].Doors[0].y][storage[5].Doors[0].z] = floorColour;
+         world[storage[5].Doors[0].hallwayBeginningX][storage[5].Doors[0].hallwayBeginningY][storage[5].Doors[0].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[5].Doors[0].x][storage[5].Doors[0].y + setHallWayWallHeight - 1][storage[5].Doors[0].z] = wallColour;
+      world[storage[5].Doors[0].hallwayBeginningX][storage[5].Doors[0].hallwayBeginningY + setHallWayWallHeight - 1][storage[5].Doors[0].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[5].Doors[0].x - 1][storage[5].Doors[0].y + wallHeight][storage[5].Doors[0].z] = wallColour;
-         world[storage[5].Doors[0].x + 1][storage[5].Doors[0].y + wallHeight][storage[5].Doors[0].z] = wallColour;
+         world[storage[5].Doors[0].hallwayBeginningX - 1][storage[5].Doors[0].hallwayBeginningY + wallHeight][storage[5].Doors[0].hallwayBeginningZ] = wallColour;
+         world[storage[5].Doors[0].hallwayBeginningX + 1][storage[5].Doors[0].hallwayBeginningY + wallHeight][storage[5].Doors[0].hallwayBeginningZ] = wallColour;
       }
    }
 }
@@ -2854,7 +2854,7 @@ void buildHallwayFromRoom3ToRoom6(Room storage[9], int floorColour, int wallColo
 {
    //ID: Room3 to Room6
    //Detection of a path across from the door
-   for (int check1 = storage[3].Doors[2].z + 1; check1 < storage[6].Doors[0].z + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 6
+   for (int check1 = storage[3].Doors[2].hallwayBeginningZ + 1; check1 < storage[6].Doors[0].hallwayBeginningZ + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 6
    {
       //Colour randomizer
       int randColour = (rand() % ((2 - 1) + 1)) + 1;
@@ -2862,12 +2862,12 @@ void buildHallwayFromRoom3ToRoom6(Room storage[9], int floorColour, int wallColo
       for (int check2 = storage[6].startingX; check2 < storage[6].startingX + storage[6].xLength; check2++) //This should be the range of the starting X and xLength of the connecting door which is the door of Room 6
       {
          //This is a test line
-         //world[check2][storage[0].Doors[0].y + 6][check1] = 4;
+         //world[check2][storage[0].Doors[0].hallwayBeginningY + 6][check1] = 4;
 
-         if (world[check2][storage[3].Doors[2].y][check1] != 0)
+         if (world[check2][storage[3].Doors[2].hallwayBeginningY][check1] != 0)
          {
             int stopX = check2; // + 1? Need a + 1 to accunt for the new walls added
-            int stopY = storage[3].Doors[2].y;
+            int stopY = storage[3].Doors[2].hallwayBeginningY;
             int stopZ = check1;
 
             //Fixed the position of the other door entrance to the bridge
@@ -2878,10 +2878,10 @@ void buildHallwayFromRoom3ToRoom6(Room storage[9], int floorColour, int wallColo
             //Builds the wall around the hallway - extends the walls by two from the starting end
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
-               world[storage[3].Doors[2].x - 1][storage[3].Doors[2].y + wallHeight][storage[3].Doors[2].z + 1] = wallColour;
-               world[storage[3].Doors[2].x + 1][storage[3].Doors[2].y + wallHeight][storage[3].Doors[2].z + 1] = wallColour;
-               world[storage[3].Doors[2].x - 1][storage[3].Doors[2].y + wallHeight][storage[3].Doors[2].z + 2] = wallColour;
-               world[storage[3].Doors[2].x + 1][storage[3].Doors[2].y + wallHeight][storage[3].Doors[2].z + 2] = wallColour;
+               world[storage[3].Doors[2].hallwayBeginningX - 1][storage[3].Doors[2].hallwayBeginningY + wallHeight][storage[3].Doors[2].hallwayBeginningZ + 1] = wallColour;
+               world[storage[3].Doors[2].hallwayBeginningX + 1][storage[3].Doors[2].hallwayBeginningY + wallHeight][storage[3].Doors[2].hallwayBeginningZ + 1] = wallColour;
+               world[storage[3].Doors[2].hallwayBeginningX - 1][storage[3].Doors[2].hallwayBeginningY + wallHeight][storage[3].Doors[2].hallwayBeginningZ + 2] = wallColour;
+               world[storage[3].Doors[2].hallwayBeginningX + 1][storage[3].Doors[2].hallwayBeginningY + wallHeight][storage[3].Doors[2].hallwayBeginningZ + 2] = wallColour;
 
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
                world[fixedStopX + 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
@@ -2891,11 +2891,11 @@ void buildHallwayFromRoom3ToRoom6(Room storage[9], int floorColour, int wallColo
 
             //Build the sideways bridge
             //Leftside, rightside or equal case check
-            if (storage[3].Doors[2].x < fixedStopX)
+            if (storage[3].Doors[2].hallwayBeginningX < fixedStopX)
             {
                //Rightside case
                //build postive x
-               for (int build = storage[3].Doors[2].x; build <= fixedStopX; build++)
+               for (int build = storage[3].Doors[2].hallwayBeginningX; build <= fixedStopX; build++)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[build][stopY][stopZ] = floorColour;
@@ -2928,11 +2928,11 @@ void buildHallwayFromRoom3ToRoom6(Room storage[9], int floorColour, int wallColo
                   world[build][stopY + setHallWayWallHeight - 1][stopZ] = wallColour;
                }
             }
-            else if (storage[3].Doors[2].x > fixedStopX)
+            else if (storage[3].Doors[2].hallwayBeginningX > fixedStopX)
             {
                //Leftside case
                //build negative x
-               for (int build = storage[3].Doors[2].x; build >= fixedStopX; build--)
+               for (int build = storage[3].Doors[2].hallwayBeginningX; build >= fixedStopX; build--)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[build][stopY][stopZ] = floorColour;
@@ -2970,13 +2970,13 @@ void buildHallwayFromRoom3ToRoom6(Room storage[9], int floorColour, int wallColo
             }
 
             //Fixing the door entrance to the bridge
-            world[storage[3].Doors[2].x][storage[3].Doors[2].y][storage[3].Doors[2].z] = floorColour;
+            world[storage[3].Doors[2].hallwayBeginningX][storage[3].Doors[2].hallwayBeginningY][storage[3].Doors[2].hallwayBeginningZ] = floorColour;
             world[fixedStopX][fixedStopY][fixedStopZ] = floorColour;
 
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
                //Clears the entrance to the bridge
-               world[storage[3].Doors[2].x][storage[3].Doors[2].y + 1 + wallHeight][storage[3].Doors[2].z] = 0;
+               world[storage[3].Doors[2].hallwayBeginningX][storage[3].Doors[2].hallwayBeginningY + 1 + wallHeight][storage[3].Doors[2].hallwayBeginningZ] = 0;
 
                //This is a test line
                //world[fixedStopX][fixedStopY + 5 + wallHeight][fixedStopZ] = 4;
@@ -2985,7 +2985,7 @@ void buildHallwayFromRoom3ToRoom6(Room storage[9], int floorColour, int wallColo
             }
 
             //Build the ceiling to the hallway's bridge
-            world[storage[3].Doors[2].x][storage[3].Doors[2].y + setHallWayWallHeight - 1][storage[3].Doors[2].z] = wallColour;
+            world[storage[3].Doors[2].hallwayBeginningX][storage[3].Doors[2].hallwayBeginningY + setHallWayWallHeight - 1][storage[3].Doors[2].hallwayBeginningZ] = wallColour;
             world[fixedStopX][fixedStopY + setHallWayWallHeight - 1][fixedStopZ] = wallColour;
 
             return;
@@ -2993,53 +2993,53 @@ void buildHallwayFromRoom3ToRoom6(Room storage[9], int floorColour, int wallColo
       }
 
       //Increases the hallway length by one
-      storage[3].Doors[2].z = storage[3].Doors[2].z + 1;
-      //world[storage[3].Doors[2].x][storage[3].Doors[2].y][storage[3].Doors[2].z] = floorColour;
+      storage[3].Doors[2].hallwayBeginningZ = storage[3].Doors[2].hallwayBeginningZ + 1;
+      //world[storage[3].Doors[2].hallwayBeginningX][storage[3].Doors[2].hallwayBeginningY][storage[3].Doors[2].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[3].Doors[2].x][storage[3].Doors[2].y][storage[3].Doors[2].z] = floorShade;
+         world[storage[3].Doors[2].hallwayBeginningX][storage[3].Doors[2].hallwayBeginningY][storage[3].Doors[2].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[3].Doors[2].x][storage[3].Doors[2].y][storage[3].Doors[2].z] = floorColour;
+         world[storage[3].Doors[2].hallwayBeginningX][storage[3].Doors[2].hallwayBeginningY][storage[3].Doors[2].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[3].Doors[2].x][storage[3].Doors[2].y + setHallWayWallHeight - 1][storage[3].Doors[2].z] = wallColour;
+      world[storage[3].Doors[2].hallwayBeginningX][storage[3].Doors[2].hallwayBeginningY + setHallWayWallHeight - 1][storage[3].Doors[2].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[3].Doors[2].x - 1][storage[3].Doors[2].y + wallHeight][storage[3].Doors[2].z] = wallColour;
-         world[storage[3].Doors[2].x + 1][storage[3].Doors[2].y + wallHeight][storage[3].Doors[2].z] = wallColour;
+         world[storage[3].Doors[2].hallwayBeginningX - 1][storage[3].Doors[2].hallwayBeginningY + wallHeight][storage[3].Doors[2].hallwayBeginningZ] = wallColour;
+         world[storage[3].Doors[2].hallwayBeginningX + 1][storage[3].Doors[2].hallwayBeginningY + wallHeight][storage[3].Doors[2].hallwayBeginningZ] = wallColour;
       }
 
       //Increases the opposite hallway of the top door by one towards the top door
-      storage[6].Doors[0].z = storage[6].Doors[0].z - 1;
-      //world[storage[6].Doors[0].x][storage[6].Doors[0].y][storage[6].Doors[0].z] = floorColour;
+      storage[6].Doors[0].hallwayBeginningZ = storage[6].Doors[0].hallwayBeginningZ - 1;
+      //world[storage[6].Doors[0].hallwayBeginningX][storage[6].Doors[0].hallwayBeginningY][storage[6].Doors[0].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[6].Doors[0].x][storage[6].Doors[0].y][storage[6].Doors[0].z] = floorShade;
+         world[storage[6].Doors[0].hallwayBeginningX][storage[6].Doors[0].hallwayBeginningY][storage[6].Doors[0].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[6].Doors[0].x][storage[6].Doors[0].y][storage[6].Doors[0].z] = floorColour;
+         world[storage[6].Doors[0].hallwayBeginningX][storage[6].Doors[0].hallwayBeginningY][storage[6].Doors[0].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[6].Doors[0].x][storage[6].Doors[0].y + setHallWayWallHeight - 1][storage[6].Doors[0].z] = wallColour;
+      world[storage[6].Doors[0].hallwayBeginningX][storage[6].Doors[0].hallwayBeginningY + setHallWayWallHeight - 1][storage[6].Doors[0].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[6].Doors[0].x - 1][storage[6].Doors[0].y + wallHeight][storage[6].Doors[0].z] = wallColour;
-         world[storage[6].Doors[0].x + 1][storage[6].Doors[0].y + wallHeight][storage[6].Doors[0].z] = wallColour;
+         world[storage[6].Doors[0].hallwayBeginningX - 1][storage[6].Doors[0].hallwayBeginningY + wallHeight][storage[6].Doors[0].hallwayBeginningZ] = wallColour;
+         world[storage[6].Doors[0].hallwayBeginningX + 1][storage[6].Doors[0].hallwayBeginningY + wallHeight][storage[6].Doors[0].hallwayBeginningZ] = wallColour;
       }
    }
 }
@@ -3048,7 +3048,7 @@ void buildHallwayFromRoom4ToRoom7(Room storage[9], int floorColour, int wallColo
 {
    //ID: Room4 to Room7
    //Detection of a path across from the door
-   for (int check1 = storage[4].Doors[2].z + 1; check1 < storage[7].Doors[0].z + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 3
+   for (int check1 = storage[4].Doors[2].hallwayBeginningZ + 1; check1 < storage[7].Doors[0].hallwayBeginningZ + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 3
    {
       //Colour randomizer
       int randColour = (rand() % ((2 - 1) + 1)) + 1;
@@ -3056,12 +3056,12 @@ void buildHallwayFromRoom4ToRoom7(Room storage[9], int floorColour, int wallColo
       for (int check2 = storage[7].startingX; check2 < storage[7].startingX + storage[7].xLength; check2++) //This should be the range of the starting X and xLength of the connecting door which is the door of Room 3
       {
          //This is a test line
-         //world[check2][storage[0].Doors[0].y + 6][check1] = 4;
+         //world[check2][storage[0].Doors[0].hallwayBeginningY + 6][check1] = 4;
 
-         if (world[check2][storage[4].Doors[2].y][check1] != 0)
+         if (world[check2][storage[4].Doors[2].hallwayBeginningY][check1] != 0)
          {
             int stopX = check2; // + 1? Need a + 1 to accunt for the new walls added
-            int stopY = storage[4].Doors[2].y;
+            int stopY = storage[4].Doors[2].hallwayBeginningY;
             int stopZ = check1;
 
             //Fixed the position of the other door entrance to the bridge
@@ -3072,10 +3072,10 @@ void buildHallwayFromRoom4ToRoom7(Room storage[9], int floorColour, int wallColo
             //Builds the wall around the hallway - extends the walls by two from the starting end
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
-               world[storage[4].Doors[2].x - 1][storage[4].Doors[2].y + wallHeight][storage[4].Doors[2].z + 1] = wallColour;
-               world[storage[4].Doors[2].x + 1][storage[4].Doors[2].y + wallHeight][storage[4].Doors[2].z + 1] = wallColour;
-               world[storage[4].Doors[2].x - 1][storage[4].Doors[2].y + wallHeight][storage[4].Doors[2].z + 2] = wallColour;
-               world[storage[4].Doors[2].x + 1][storage[4].Doors[2].y + wallHeight][storage[4].Doors[2].z + 2] = wallColour;
+               world[storage[4].Doors[2].hallwayBeginningX - 1][storage[4].Doors[2].hallwayBeginningY + wallHeight][storage[4].Doors[2].hallwayBeginningZ + 1] = wallColour;
+               world[storage[4].Doors[2].hallwayBeginningX + 1][storage[4].Doors[2].hallwayBeginningY + wallHeight][storage[4].Doors[2].hallwayBeginningZ + 1] = wallColour;
+               world[storage[4].Doors[2].hallwayBeginningX - 1][storage[4].Doors[2].hallwayBeginningY + wallHeight][storage[4].Doors[2].hallwayBeginningZ + 2] = wallColour;
+               world[storage[4].Doors[2].hallwayBeginningX + 1][storage[4].Doors[2].hallwayBeginningY + wallHeight][storage[4].Doors[2].hallwayBeginningZ + 2] = wallColour;
 
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
                world[fixedStopX + 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
@@ -3085,11 +3085,11 @@ void buildHallwayFromRoom4ToRoom7(Room storage[9], int floorColour, int wallColo
 
             //Build the sideways bridge
             //Leftside, rightside or equal case check
-            if (storage[4].Doors[2].x < fixedStopX)
+            if (storage[4].Doors[2].hallwayBeginningX < fixedStopX)
             {
                //Rightside case
                //build postive x
-               for (int build = storage[4].Doors[2].x; build <= fixedStopX; build++)
+               for (int build = storage[4].Doors[2].hallwayBeginningX; build <= fixedStopX; build++)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[build][stopY][stopZ] = floorColour;
@@ -3122,11 +3122,11 @@ void buildHallwayFromRoom4ToRoom7(Room storage[9], int floorColour, int wallColo
                   world[build][stopY + setHallWayWallHeight - 1][stopZ] = wallColour;
                }
             }
-            else if (storage[4].Doors[2].x > fixedStopX)
+            else if (storage[4].Doors[2].hallwayBeginningX > fixedStopX)
             {
                //Leftside case
                //build negative x
-               for (int build = storage[4].Doors[2].x; build >= fixedStopX; build--)
+               for (int build = storage[4].Doors[2].hallwayBeginningX; build >= fixedStopX; build--)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[build][stopY][stopZ] = floorColour;
@@ -3164,13 +3164,13 @@ void buildHallwayFromRoom4ToRoom7(Room storage[9], int floorColour, int wallColo
             }
 
             //Fixing the door entrance to the bridge
-            world[storage[4].Doors[2].x][storage[4].Doors[2].y][storage[4].Doors[2].z] = floorColour;
+            world[storage[4].Doors[2].hallwayBeginningX][storage[4].Doors[2].hallwayBeginningY][storage[4].Doors[2].hallwayBeginningZ] = floorColour;
             world[fixedStopX][fixedStopY][fixedStopZ] = floorColour;
 
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
                //Clears the entrance to the bridge
-               world[storage[4].Doors[2].x][storage[4].Doors[2].y + 1 + wallHeight][storage[4].Doors[2].z] = 0;
+               world[storage[4].Doors[2].hallwayBeginningX][storage[4].Doors[2].hallwayBeginningY + 1 + wallHeight][storage[4].Doors[2].hallwayBeginningZ] = 0;
 
                //This is a test line
                //world[fixedStopX][fixedStopY + 5 + wallHeight][fixedStopZ] = 4;
@@ -3179,7 +3179,7 @@ void buildHallwayFromRoom4ToRoom7(Room storage[9], int floorColour, int wallColo
             }
 
             //Build the ceiling to the hallway's bridge
-            world[storage[4].Doors[2].x][storage[4].Doors[2].y + setHallWayWallHeight - 1][storage[4].Doors[2].z] = wallColour;
+            world[storage[4].Doors[2].hallwayBeginningX][storage[4].Doors[2].hallwayBeginningY + setHallWayWallHeight - 1][storage[4].Doors[2].hallwayBeginningZ] = wallColour;
             world[fixedStopX][fixedStopY + setHallWayWallHeight - 1][fixedStopZ] = wallColour;
 
             return;
@@ -3187,53 +3187,53 @@ void buildHallwayFromRoom4ToRoom7(Room storage[9], int floorColour, int wallColo
       }
 
       //Increases the hallway length by one
-      storage[4].Doors[2].z = storage[4].Doors[2].z + 1;
-      //world[storage[4].Doors[2].x][storage[4].Doors[2].y][storage[4].Doors[2].z] = floorColour;
+      storage[4].Doors[2].hallwayBeginningZ = storage[4].Doors[2].hallwayBeginningZ + 1;
+      //world[storage[4].Doors[2].hallwayBeginningX][storage[4].Doors[2].hallwayBeginningY][storage[4].Doors[2].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[4].Doors[2].x][storage[4].Doors[2].y][storage[4].Doors[2].z] = floorShade;
+         world[storage[4].Doors[2].hallwayBeginningX][storage[4].Doors[2].hallwayBeginningY][storage[4].Doors[2].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[4].Doors[2].x][storage[4].Doors[2].y][storage[4].Doors[2].z] = floorColour;
+         world[storage[4].Doors[2].hallwayBeginningX][storage[4].Doors[2].hallwayBeginningY][storage[4].Doors[2].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[4].Doors[2].x][storage[4].Doors[2].y + setHallWayWallHeight - 1][storage[4].Doors[2].z] = wallColour;
+      world[storage[4].Doors[2].hallwayBeginningX][storage[4].Doors[2].hallwayBeginningY + setHallWayWallHeight - 1][storage[4].Doors[2].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[4].Doors[2].x - 1][storage[4].Doors[2].y + wallHeight][storage[4].Doors[2].z] = wallColour;
-         world[storage[4].Doors[2].x + 1][storage[4].Doors[2].y + wallHeight][storage[4].Doors[2].z] = wallColour;
+         world[storage[4].Doors[2].hallwayBeginningX - 1][storage[4].Doors[2].hallwayBeginningY + wallHeight][storage[4].Doors[2].hallwayBeginningZ] = wallColour;
+         world[storage[4].Doors[2].hallwayBeginningX + 1][storage[4].Doors[2].hallwayBeginningY + wallHeight][storage[4].Doors[2].hallwayBeginningZ] = wallColour;
       }
 
       //Increases the opposite hallway of the top door by one towards the top door
-      storage[7].Doors[0].z = storage[7].Doors[0].z - 1;
-      //world[storage[7].Doors[0].x][storage[7].Doors[0].y][storage[7].Doors[0].z] = floorColour;
+      storage[7].Doors[0].hallwayBeginningZ = storage[7].Doors[0].hallwayBeginningZ - 1;
+      //world[storage[7].Doors[0].hallwayBeginningX][storage[7].Doors[0].hallwayBeginningY][storage[7].Doors[0].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[7].Doors[0].x][storage[7].Doors[0].y][storage[7].Doors[0].z] = floorShade;
+         world[storage[7].Doors[0].hallwayBeginningX][storage[7].Doors[0].hallwayBeginningY][storage[7].Doors[0].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[7].Doors[0].x][storage[7].Doors[0].y][storage[7].Doors[0].z] = floorColour;
+         world[storage[7].Doors[0].hallwayBeginningX][storage[7].Doors[0].hallwayBeginningY][storage[7].Doors[0].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[7].Doors[0].x][storage[7].Doors[0].y + setHallWayWallHeight - 1][storage[7].Doors[0].z] = wallColour;
+      world[storage[7].Doors[0].hallwayBeginningX][storage[7].Doors[0].hallwayBeginningY + setHallWayWallHeight - 1][storage[7].Doors[0].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[7].Doors[0].x - 1][storage[7].Doors[0].y + wallHeight][storage[7].Doors[0].z] = wallColour;
-         world[storage[7].Doors[0].x + 1][storage[7].Doors[0].y + wallHeight][storage[7].Doors[0].z] = wallColour;
+         world[storage[7].Doors[0].hallwayBeginningX - 1][storage[7].Doors[0].hallwayBeginningY + wallHeight][storage[7].Doors[0].hallwayBeginningZ] = wallColour;
+         world[storage[7].Doors[0].hallwayBeginningX + 1][storage[7].Doors[0].hallwayBeginningY + wallHeight][storage[7].Doors[0].hallwayBeginningZ] = wallColour;
       }
    }
 }
@@ -3242,7 +3242,7 @@ void buildHallwayFromRoom5ToRoom8(Room storage[9], int floorColour, int wallColo
 {
    //ID: Room5 to Room8
    //Detection of a path across from the door
-   for (int check1 = storage[5].Doors[2].z + 1; check1 < storage[8].Doors[0].z + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 3
+   for (int check1 = storage[5].Doors[2].hallwayBeginningZ + 1; check1 < storage[8].Doors[0].hallwayBeginningZ + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 3
    {
       //Colour randomizer
       int randColour = (rand() % ((2 - 1) + 1)) + 1;
@@ -3250,12 +3250,12 @@ void buildHallwayFromRoom5ToRoom8(Room storage[9], int floorColour, int wallColo
       for (int check2 = storage[8].startingX; check2 < storage[8].startingX + storage[8].xLength; check2++) //This should be the range of the starting X and xLength of the connecting door which is the door of Room 8
       {
          //This is a test line
-         //world[check2][storage[0].Doors[0].y + 6][check1] = 4;
+         //world[check2][storage[0].Doors[0].hallwayBeginningY + 6][check1] = 4;
 
-         if (world[check2][storage[5].Doors[2].y][check1] != 0)
+         if (world[check2][storage[5].Doors[2].hallwayBeginningY][check1] != 0)
          {
             int stopX = check2; // + 1? Need a + 1 to accunt for the new walls added
-            int stopY = storage[5].Doors[2].y;
+            int stopY = storage[5].Doors[2].hallwayBeginningY;
             int stopZ = check1;
 
             //Fixed the position of the other door entrance to the bridge
@@ -3266,10 +3266,10 @@ void buildHallwayFromRoom5ToRoom8(Room storage[9], int floorColour, int wallColo
             //Builds the wall around the hallway - extends the walls by two from the starting end
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
-               world[storage[5].Doors[2].x - 1][storage[5].Doors[2].y + wallHeight][storage[5].Doors[2].z + 1] = wallColour;
-               world[storage[5].Doors[2].x + 1][storage[5].Doors[2].y + wallHeight][storage[5].Doors[2].z + 1] = wallColour;
-               world[storage[5].Doors[2].x - 1][storage[5].Doors[2].y + wallHeight][storage[5].Doors[2].z + 2] = wallColour;
-               world[storage[5].Doors[2].x + 1][storage[5].Doors[2].y + wallHeight][storage[5].Doors[2].z + 2] = wallColour;
+               world[storage[5].Doors[2].hallwayBeginningX - 1][storage[5].Doors[2].hallwayBeginningY + wallHeight][storage[5].Doors[2].hallwayBeginningZ + 1] = wallColour;
+               world[storage[5].Doors[2].hallwayBeginningX + 1][storage[5].Doors[2].hallwayBeginningY + wallHeight][storage[5].Doors[2].hallwayBeginningZ + 1] = wallColour;
+               world[storage[5].Doors[2].hallwayBeginningX - 1][storage[5].Doors[2].hallwayBeginningY + wallHeight][storage[5].Doors[2].hallwayBeginningZ + 2] = wallColour;
+               world[storage[5].Doors[2].hallwayBeginningX + 1][storage[5].Doors[2].hallwayBeginningY + wallHeight][storage[5].Doors[2].hallwayBeginningZ + 2] = wallColour;
 
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
                world[fixedStopX + 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
@@ -3279,11 +3279,11 @@ void buildHallwayFromRoom5ToRoom8(Room storage[9], int floorColour, int wallColo
 
             //Build the sideways bridge
             //Leftside, rightside or equal case check
-            if (storage[5].Doors[2].x < fixedStopX)
+            if (storage[5].Doors[2].hallwayBeginningX < fixedStopX)
             {
                //Rightside case
                //build postive x
-               for (int build = storage[5].Doors[2].x; build <= fixedStopX; build++)
+               for (int build = storage[5].Doors[2].hallwayBeginningX; build <= fixedStopX; build++)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[build][stopY][stopZ] = floorColour;
@@ -3316,11 +3316,11 @@ void buildHallwayFromRoom5ToRoom8(Room storage[9], int floorColour, int wallColo
                   world[build][stopY + setHallWayWallHeight - 1][stopZ] = wallColour;
                }
             }
-            else if (storage[5].Doors[2].x > fixedStopX)
+            else if (storage[5].Doors[2].hallwayBeginningX > fixedStopX)
             {
                //Leftside case
                //build negative x
-               for (int build = storage[5].Doors[2].x; build >= fixedStopX; build--)
+               for (int build = storage[5].Doors[2].hallwayBeginningX; build >= fixedStopX; build--)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[build][stopY][stopZ] = floorColour;
@@ -3358,13 +3358,13 @@ void buildHallwayFromRoom5ToRoom8(Room storage[9], int floorColour, int wallColo
             }
 
             //Fixing the door entrance to the bridge
-            world[storage[5].Doors[2].x][storage[5].Doors[2].y][storage[5].Doors[2].z] = floorColour;
+            world[storage[5].Doors[2].hallwayBeginningX][storage[5].Doors[2].hallwayBeginningY][storage[5].Doors[2].hallwayBeginningZ] = floorColour;
             world[fixedStopX][fixedStopY][fixedStopZ] = floorColour;
 
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
                //Clears the entrance to the bridge
-               world[storage[5].Doors[2].x][storage[5].Doors[2].y + 1 + wallHeight][storage[5].Doors[2].z] = 0;
+               world[storage[5].Doors[2].hallwayBeginningX][storage[5].Doors[2].hallwayBeginningY + 1 + wallHeight][storage[5].Doors[2].hallwayBeginningZ] = 0;
 
                //This is a test line
                //world[fixedStopX][fixedStopY + 5 + wallHeight][fixedStopZ] = 4;
@@ -3373,7 +3373,7 @@ void buildHallwayFromRoom5ToRoom8(Room storage[9], int floorColour, int wallColo
             }
 
             //Build the ceiling to the hallway's bridge
-            world[storage[5].Doors[2].x][storage[5].Doors[2].y + setHallWayWallHeight - 1][storage[5].Doors[2].z] = wallColour;
+            world[storage[5].Doors[2].hallwayBeginningX][storage[5].Doors[2].hallwayBeginningY + setHallWayWallHeight - 1][storage[5].Doors[2].hallwayBeginningZ] = wallColour;
             world[fixedStopX][fixedStopY + setHallWayWallHeight - 1][fixedStopZ] = wallColour;
 
             return;
@@ -3381,53 +3381,53 @@ void buildHallwayFromRoom5ToRoom8(Room storage[9], int floorColour, int wallColo
       }
 
       //Increases the hallway length by one
-      storage[5].Doors[2].z = storage[5].Doors[2].z + 1;
-      //world[storage[5].Doors[2].x][storage[5].Doors[2].y][storage[5].Doors[2].z] = floorColour;
+      storage[5].Doors[2].hallwayBeginningZ = storage[5].Doors[2].hallwayBeginningZ + 1;
+      //world[storage[5].Doors[2].hallwayBeginningX][storage[5].Doors[2].hallwayBeginningY][storage[5].Doors[2].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[5].Doors[2].x][storage[5].Doors[2].y][storage[5].Doors[2].z] = floorShade;
+         world[storage[5].Doors[2].hallwayBeginningX][storage[5].Doors[2].hallwayBeginningY][storage[5].Doors[2].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[5].Doors[2].x][storage[5].Doors[2].y][storage[5].Doors[2].z] = floorColour;
+         world[storage[5].Doors[2].hallwayBeginningX][storage[5].Doors[2].hallwayBeginningY][storage[5].Doors[2].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[5].Doors[2].x][storage[5].Doors[2].y + setHallWayWallHeight - 1][storage[5].Doors[2].z] = wallColour;
+      world[storage[5].Doors[2].hallwayBeginningX][storage[5].Doors[2].hallwayBeginningY + setHallWayWallHeight - 1][storage[5].Doors[2].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[5].Doors[2].x - 1][storage[5].Doors[2].y + wallHeight][storage[5].Doors[2].z] = wallColour;
-         world[storage[5].Doors[2].x + 1][storage[5].Doors[2].y + wallHeight][storage[5].Doors[2].z] = wallColour;
+         world[storage[5].Doors[2].hallwayBeginningX - 1][storage[5].Doors[2].hallwayBeginningY + wallHeight][storage[5].Doors[2].hallwayBeginningZ] = wallColour;
+         world[storage[5].Doors[2].hallwayBeginningX + 1][storage[5].Doors[2].hallwayBeginningY + wallHeight][storage[5].Doors[2].hallwayBeginningZ] = wallColour;
       }
 
       //Increases the opposite hallway of the top door by one towards the top door
-      storage[8].Doors[0].z = storage[8].Doors[0].z - 1;
-      //world[storage[8].Doors[0].x][storage[8].Doors[0].y][storage[8].Doors[0].z] = floorColour;
+      storage[8].Doors[0].hallwayBeginningZ = storage[8].Doors[0].hallwayBeginningZ - 1;
+      //world[storage[8].Doors[0].hallwayBeginningX][storage[8].Doors[0].hallwayBeginningY][storage[8].Doors[0].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[8].Doors[0].x][storage[8].Doors[0].y][storage[8].Doors[0].z] = floorShade;
+         world[storage[8].Doors[0].hallwayBeginningX][storage[8].Doors[0].hallwayBeginningY][storage[8].Doors[0].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[8].Doors[0].x][storage[8].Doors[0].y][storage[8].Doors[0].z] = floorColour;
+         world[storage[8].Doors[0].hallwayBeginningX][storage[8].Doors[0].hallwayBeginningY][storage[8].Doors[0].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[8].Doors[0].x][storage[8].Doors[0].y + setHallWayWallHeight - 1][storage[8].Doors[0].z] = wallColour;
+      world[storage[8].Doors[0].hallwayBeginningX][storage[8].Doors[0].hallwayBeginningY + setHallWayWallHeight - 1][storage[8].Doors[0].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[8].Doors[0].x - 1][storage[8].Doors[0].y + wallHeight][storage[8].Doors[0].z] = wallColour;
-         world[storage[8].Doors[0].x + 1][storage[8].Doors[0].y + wallHeight][storage[8].Doors[0].z] = wallColour;
+         world[storage[8].Doors[0].hallwayBeginningX - 1][storage[8].Doors[0].hallwayBeginningY + wallHeight][storage[8].Doors[0].hallwayBeginningZ] = wallColour;
+         world[storage[8].Doors[0].hallwayBeginningX + 1][storage[8].Doors[0].hallwayBeginningY + wallHeight][storage[8].Doors[0].hallwayBeginningZ] = wallColour;
       }
    }
 }
@@ -3436,7 +3436,7 @@ void buildHallwayFromRoom0ToRoom1(Room storage[9], int floorColour, int wallColo
 {
    //ID: Room0 to Room1
    //Detection of a path across from the door
-   for (int check1 = storage[0].Doors[1].x + 1; check1 < storage[1].Doors[2].x + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 1
+   for (int check1 = storage[0].Doors[1].hallwayBeginningX + 1; check1 < storage[1].Doors[2].hallwayBeginningX + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 1
    {
       //Colour randomizer
       int randColour = (rand() % ((2 - 1) + 1)) + 1;
@@ -3444,12 +3444,12 @@ void buildHallwayFromRoom0ToRoom1(Room storage[9], int floorColour, int wallColo
       for (int check2 = storage[1].startingZ; check2 < storage[1].startingZ + storage[1].zLength; check2++) //Scans Z //This should be the range of the starting X and xLength of the connecting door which is the door of Room 1
       {
          //This is a test line
-         //world[check1][storage[0].Doors[0].y + 6][check2] = 4;
+         //world[check1][storage[0].Doors[0].hallwayBeginningY + 6][check2] = 4;
 
-         if (world[check1][storage[0].Doors[1].y][check2] != 0)
+         if (world[check1][storage[0].Doors[1].hallwayBeginningY][check2] != 0)
          {
             int stopX = check1; // + 1? Need a + 1 to accunt for the new walls added
-            int stopY = storage[0].Doors[1].y;
+            int stopY = storage[0].Doors[1].hallwayBeginningY;
             int stopZ = check2;
 
             //Fixed the position of the other door entrance to the bridge
@@ -3460,10 +3460,10 @@ void buildHallwayFromRoom0ToRoom1(Room storage[9], int floorColour, int wallColo
             //Builds the wall around the hallway - extends the walls by two from the starting end
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
-               world[storage[0].Doors[1].x + 1][storage[0].Doors[1].y + wallHeight][storage[0].Doors[1].z - 1] = wallColour;
-               world[storage[0].Doors[1].x + 1][storage[0].Doors[1].y + wallHeight][storage[0].Doors[1].z + 1] = wallColour;
-               world[storage[0].Doors[1].x + 2][storage[0].Doors[1].y + wallHeight][storage[0].Doors[1].z - 1] = wallColour;
-               world[storage[0].Doors[1].x + 2][storage[0].Doors[1].y + wallHeight][storage[0].Doors[1].z + 1] = wallColour;
+               world[storage[0].Doors[1].hallwayBeginningX + 1][storage[0].Doors[1].hallwayBeginningY + wallHeight][storage[0].Doors[1].hallwayBeginningZ - 1] = wallColour;
+               world[storage[0].Doors[1].hallwayBeginningX + 1][storage[0].Doors[1].hallwayBeginningY + wallHeight][storage[0].Doors[1].hallwayBeginningZ + 1] = wallColour;
+               world[storage[0].Doors[1].hallwayBeginningX + 2][storage[0].Doors[1].hallwayBeginningY + wallHeight][storage[0].Doors[1].hallwayBeginningZ - 1] = wallColour;
+               world[storage[0].Doors[1].hallwayBeginningX + 2][storage[0].Doors[1].hallwayBeginningY + wallHeight][storage[0].Doors[1].hallwayBeginningZ + 1] = wallColour;
 
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ + 1] = wallColour;
@@ -3473,11 +3473,11 @@ void buildHallwayFromRoom0ToRoom1(Room storage[9], int floorColour, int wallColo
 
             //Build the sideways bridge
             //Leftside, rightside or equal case check
-            if (storage[0].Doors[1].z < fixedStopZ)
+            if (storage[0].Doors[1].hallwayBeginningZ < fixedStopZ)
             {
                //Rightside case
                //build postive x
-               for (int build = storage[0].Doors[1].z; build <= fixedStopZ; build++)
+               for (int build = storage[0].Doors[1].hallwayBeginningZ; build <= fixedStopZ; build++)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[stopX][stopY][build] = floorColour;
@@ -3509,11 +3509,11 @@ void buildHallwayFromRoom0ToRoom1(Room storage[9], int floorColour, int wallColo
                   world[stopX][stopY + setHallWayWallHeight - 1][build] = wallColour;
                }
             }
-            else if (storage[0].Doors[1].z > fixedStopZ)
+            else if (storage[0].Doors[1].hallwayBeginningZ > fixedStopZ)
             {
                //Leftside case
                //build negative x
-               for (int build = storage[0].Doors[1].z; build >= fixedStopZ; build--)
+               for (int build = storage[0].Doors[1].hallwayBeginningZ; build >= fixedStopZ; build--)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[stopX][stopY][build] = floorColour;
@@ -3551,13 +3551,13 @@ void buildHallwayFromRoom0ToRoom1(Room storage[9], int floorColour, int wallColo
             }
 
             //Fixing the door entrance to the bridge
-            world[storage[0].Doors[1].x][storage[0].Doors[1].y][storage[0].Doors[1].z] = floorColour;
+            world[storage[0].Doors[1].hallwayBeginningX][storage[0].Doors[1].hallwayBeginningY][storage[0].Doors[1].hallwayBeginningZ] = floorColour;
             world[fixedStopX][fixedStopY][fixedStopZ] = floorColour;
 
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
                //Clears the entrance to the bridge
-               world[storage[0].Doors[1].x][storage[0].Doors[1].y + 1 + wallHeight][storage[0].Doors[1].z] = 0;
+               world[storage[0].Doors[1].hallwayBeginningX][storage[0].Doors[1].hallwayBeginningY + 1 + wallHeight][storage[0].Doors[1].hallwayBeginningZ] = 0;
 
                //This is a test line
                //world[stopX][stopY + 5 + wallHeight][stopZ] = 3;
@@ -3567,7 +3567,7 @@ void buildHallwayFromRoom0ToRoom1(Room storage[9], int floorColour, int wallColo
             }
 
             //Build the ceiling to the hallway's bridge
-            world[storage[0].Doors[1].x][storage[0].Doors[1].y + setHallWayWallHeight - 1][storage[0].Doors[1].z] = wallColour;
+            world[storage[0].Doors[1].hallwayBeginningX][storage[0].Doors[1].hallwayBeginningY + setHallWayWallHeight - 1][storage[0].Doors[1].hallwayBeginningZ] = wallColour;
             world[fixedStopX][fixedStopY + setHallWayWallHeight - 1][fixedStopZ] = wallColour;
 
             return;
@@ -3575,53 +3575,53 @@ void buildHallwayFromRoom0ToRoom1(Room storage[9], int floorColour, int wallColo
       }
 
       //Increases the hallway length by one
-      storage[0].Doors[1].x = storage[0].Doors[1].x + 1;
-      //world[storage[0].Doors[1].x][storage[0].Doors[1].y][storage[0].Doors[1].z] = floorColour;
+      storage[0].Doors[1].hallwayBeginningX = storage[0].Doors[1].hallwayBeginningX + 1;
+      //world[storage[0].Doors[1].hallwayBeginningX][storage[0].Doors[1].hallwayBeginningY][storage[0].Doors[1].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[0].Doors[1].x][storage[0].Doors[1].y][storage[0].Doors[1].z] = floorShade;
+         world[storage[0].Doors[1].hallwayBeginningX][storage[0].Doors[1].hallwayBeginningY][storage[0].Doors[1].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[0].Doors[1].x][storage[0].Doors[1].y][storage[0].Doors[1].z] = floorColour;
+         world[storage[0].Doors[1].hallwayBeginningX][storage[0].Doors[1].hallwayBeginningY][storage[0].Doors[1].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[0].Doors[1].x][storage[0].Doors[1].y + setHallWayWallHeight - 1][storage[0].Doors[1].z] = wallColour;
+      world[storage[0].Doors[1].hallwayBeginningX][storage[0].Doors[1].hallwayBeginningY + setHallWayWallHeight - 1][storage[0].Doors[1].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[0].Doors[1].x][storage[0].Doors[1].y + wallHeight][storage[0].Doors[1].z - 1] = wallColour;
-         world[storage[0].Doors[1].x][storage[0].Doors[1].y + wallHeight][storage[0].Doors[1].z + 1] = wallColour;
+         world[storage[0].Doors[1].hallwayBeginningX][storage[0].Doors[1].hallwayBeginningY + wallHeight][storage[0].Doors[1].hallwayBeginningZ - 1] = wallColour;
+         world[storage[0].Doors[1].hallwayBeginningX][storage[0].Doors[1].hallwayBeginningY + wallHeight][storage[0].Doors[1].hallwayBeginningZ + 1] = wallColour;
       }
 
       //Increases the opposite hallway of the top door by one towards the top door
-      storage[1].Doors[2].x = storage[1].Doors[2].x - 1;
-      //world[storage[1].Doors[2].x][storage[1].Doors[2].y][storage[1].Doors[2].z] = floorColour;
+      storage[1].Doors[2].hallwayBeginningX = storage[1].Doors[2].hallwayBeginningX - 1;
+      //world[storage[1].Doors[2].hallwayBeginningX][storage[1].Doors[2].hallwayBeginningY][storage[1].Doors[2].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[1].Doors[2].x][storage[1].Doors[2].y][storage[1].Doors[2].z] = floorShade;
+         world[storage[1].Doors[2].hallwayBeginningX][storage[1].Doors[2].hallwayBeginningY][storage[1].Doors[2].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[1].Doors[2].x][storage[1].Doors[2].y][storage[1].Doors[2].z] = floorColour;
+         world[storage[1].Doors[2].hallwayBeginningX][storage[1].Doors[2].hallwayBeginningY][storage[1].Doors[2].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[1].Doors[2].x][storage[1].Doors[2].y + setHallWayWallHeight - 1][storage[1].Doors[2].z] = wallColour;
+      world[storage[1].Doors[2].hallwayBeginningX][storage[1].Doors[2].hallwayBeginningY + setHallWayWallHeight - 1][storage[1].Doors[2].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[1].Doors[2].x][storage[1].Doors[2].y + wallHeight][storage[1].Doors[2].z - 1] = wallColour;
-         world[storage[1].Doors[2].x][storage[1].Doors[2].y + wallHeight][storage[1].Doors[2].z + 1] = wallColour;
+         world[storage[1].Doors[2].hallwayBeginningX][storage[1].Doors[2].hallwayBeginningY + wallHeight][storage[1].Doors[2].hallwayBeginningZ - 1] = wallColour;
+         world[storage[1].Doors[2].hallwayBeginningX][storage[1].Doors[2].hallwayBeginningY + wallHeight][storage[1].Doors[2].hallwayBeginningZ + 1] = wallColour;
       }
    }
 }
@@ -3630,7 +3630,7 @@ void buildHallwayFromRoom1ToRoom2(Room storage[9], int floorColour, int wallColo
 {
    //ID: Room1 to Room2
    //Detection of a path across from the door
-   for (int check1 = storage[1].Doors[1].x + 1; check1 < storage[2].Doors[1].x + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 2
+   for (int check1 = storage[1].Doors[1].hallwayBeginningX + 1; check1 < storage[2].Doors[1].hallwayBeginningX + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 2
    {
       //Colour randomizer
       int randColour = (rand() % ((2 - 1) + 1)) + 1;
@@ -3638,12 +3638,12 @@ void buildHallwayFromRoom1ToRoom2(Room storage[9], int floorColour, int wallColo
       for (int check2 = storage[2].startingZ; check2 < storage[2].startingZ + storage[2].zLength; check2++) //Sacns Z //This should be the range of the starting X and xLength of the connecting door which is the door of Room 2
       {
          //This is a test line
-         //world[check1][storage[0].Doors[0].y + 6][check2] = 4;
+         //world[check1][storage[0].Doors[0].hallwayBeginningY + 6][check2] = 4;
 
-         if (world[check1][storage[1].Doors[1].y][check2] != 0)
+         if (world[check1][storage[1].Doors[1].hallwayBeginningY][check2] != 0)
          {
             int stopX = check1; // + 1? Need a + 1 to accunt for the new walls added
-            int stopY = storage[1].Doors[1].y;
+            int stopY = storage[1].Doors[1].hallwayBeginningY;
             int stopZ = check2;
 
             //Fixed the position of the other door entrance to the bridge
@@ -3654,10 +3654,10 @@ void buildHallwayFromRoom1ToRoom2(Room storage[9], int floorColour, int wallColo
             //Builds the wall around the hallway - extends the walls by two from the starting end
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
-               world[storage[1].Doors[1].x + 1][storage[1].Doors[1].y + wallHeight][storage[1].Doors[1].z - 1] = wallColour;
-               world[storage[1].Doors[1].x + 1][storage[1].Doors[1].y + wallHeight][storage[1].Doors[1].z + 1] = wallColour;
-               world[storage[1].Doors[1].x + 2][storage[1].Doors[1].y + wallHeight][storage[1].Doors[1].z - 1] = wallColour;
-               world[storage[1].Doors[1].x + 2][storage[1].Doors[1].y + wallHeight][storage[1].Doors[1].z + 1] = wallColour;
+               world[storage[1].Doors[1].hallwayBeginningX + 1][storage[1].Doors[1].hallwayBeginningY + wallHeight][storage[1].Doors[1].hallwayBeginningZ - 1] = wallColour;
+               world[storage[1].Doors[1].hallwayBeginningX + 1][storage[1].Doors[1].hallwayBeginningY + wallHeight][storage[1].Doors[1].hallwayBeginningZ + 1] = wallColour;
+               world[storage[1].Doors[1].hallwayBeginningX + 2][storage[1].Doors[1].hallwayBeginningY + wallHeight][storage[1].Doors[1].hallwayBeginningZ - 1] = wallColour;
+               world[storage[1].Doors[1].hallwayBeginningX + 2][storage[1].Doors[1].hallwayBeginningY + wallHeight][storage[1].Doors[1].hallwayBeginningZ + 1] = wallColour;
 
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ + 1] = wallColour;
@@ -3667,11 +3667,11 @@ void buildHallwayFromRoom1ToRoom2(Room storage[9], int floorColour, int wallColo
 
             //Build the sideways bridge
             //Leftside, rightside or equal case check
-            if (storage[1].Doors[1].z < fixedStopZ)
+            if (storage[1].Doors[1].hallwayBeginningZ < fixedStopZ)
             {
                //Rightside case
                //build postive x
-               for (int build = storage[1].Doors[1].z; build <= fixedStopZ; build++)
+               for (int build = storage[1].Doors[1].hallwayBeginningZ; build <= fixedStopZ; build++)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[stopX][stopY][build] = floorColour;
@@ -3703,11 +3703,11 @@ void buildHallwayFromRoom1ToRoom2(Room storage[9], int floorColour, int wallColo
                   world[stopX][stopY + setHallWayWallHeight - 1][build] = wallColour;
                }
             }
-            else if (storage[1].Doors[1].z > fixedStopZ)
+            else if (storage[1].Doors[1].hallwayBeginningZ > fixedStopZ)
             {
                //Leftside case
                //build negative x
-               for (int build = storage[1].Doors[1].z; build >= fixedStopZ; build--)
+               for (int build = storage[1].Doors[1].hallwayBeginningZ; build >= fixedStopZ; build--)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[stopX][stopY][build] = floorColour;
@@ -3745,13 +3745,13 @@ void buildHallwayFromRoom1ToRoom2(Room storage[9], int floorColour, int wallColo
             }
 
             //Fixing the door entrance to the bridge
-            world[storage[1].Doors[1].x][storage[1].Doors[1].y][storage[1].Doors[1].z] = floorColour;
+            world[storage[1].Doors[1].hallwayBeginningX][storage[1].Doors[1].hallwayBeginningY][storage[1].Doors[1].hallwayBeginningZ] = floorColour;
             world[fixedStopX][fixedStopY][fixedStopZ] = floorColour;
 
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
                //Clears the entrance to the bridge
-               world[storage[1].Doors[1].x][storage[1].Doors[1].y + 1 + wallHeight][storage[1].Doors[1].z] = 0;
+               world[storage[1].Doors[1].hallwayBeginningX][storage[1].Doors[1].hallwayBeginningY + 1 + wallHeight][storage[1].Doors[1].hallwayBeginningZ] = 0;
 
                //This is a test line
                //world[stopX][stopY + 5 + wallHeight][stopZ] = 3;
@@ -3761,7 +3761,7 @@ void buildHallwayFromRoom1ToRoom2(Room storage[9], int floorColour, int wallColo
             }
 
             //Build the ceiling to the hallway's bridge
-            world[storage[1].Doors[1].x][storage[1].Doors[1].y + setHallWayWallHeight - 1][storage[1].Doors[1].z] = wallColour;
+            world[storage[1].Doors[1].hallwayBeginningX][storage[1].Doors[1].hallwayBeginningY + setHallWayWallHeight - 1][storage[1].Doors[1].hallwayBeginningZ] = wallColour;
             world[fixedStopX][fixedStopY + setHallWayWallHeight - 1][fixedStopZ] = wallColour;
 
             return;
@@ -3769,53 +3769,53 @@ void buildHallwayFromRoom1ToRoom2(Room storage[9], int floorColour, int wallColo
       }
 
       //Increases the hallway length by one
-      storage[1].Doors[1].x = storage[1].Doors[1].x + 1;
-      //world[storage[1].Doors[1].x][storage[1].Doors[1].y][storage[1].Doors[1].z] = floorColour;
+      storage[1].Doors[1].hallwayBeginningX = storage[1].Doors[1].hallwayBeginningX + 1;
+      //world[storage[1].Doors[1].hallwayBeginningX][storage[1].Doors[1].hallwayBeginningY][storage[1].Doors[1].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[1].Doors[1].x][storage[1].Doors[1].y][storage[1].Doors[1].z] = floorShade;
+         world[storage[1].Doors[1].hallwayBeginningX][storage[1].Doors[1].hallwayBeginningY][storage[1].Doors[1].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[1].Doors[1].x][storage[1].Doors[1].y][storage[1].Doors[1].z] = floorColour;
+         world[storage[1].Doors[1].hallwayBeginningX][storage[1].Doors[1].hallwayBeginningY][storage[1].Doors[1].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[1].Doors[1].x][storage[1].Doors[1].y + setHallWayWallHeight - 1][storage[1].Doors[1].z] = wallColour;
+      world[storage[1].Doors[1].hallwayBeginningX][storage[1].Doors[1].hallwayBeginningY + setHallWayWallHeight - 1][storage[1].Doors[1].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[1].Doors[1].x][storage[1].Doors[1].y + wallHeight][storage[1].Doors[1].z - 1] = wallColour;
-         world[storage[1].Doors[1].x][storage[1].Doors[1].y + wallHeight][storage[1].Doors[1].z + 1] = wallColour;
+         world[storage[1].Doors[1].hallwayBeginningX][storage[1].Doors[1].hallwayBeginningY + wallHeight][storage[1].Doors[1].hallwayBeginningZ - 1] = wallColour;
+         world[storage[1].Doors[1].hallwayBeginningX][storage[1].Doors[1].hallwayBeginningY + wallHeight][storage[1].Doors[1].hallwayBeginningZ + 1] = wallColour;
       }
 
       //Increases the opposite hallway of the top door by one towards the top door
-      storage[2].Doors[1].x = storage[2].Doors[1].x - 1;
-      //world[storage[2].Doors[1].x][storage[2].Doors[1].y][storage[2].Doors[1].z] = floorColour;
+      storage[2].Doors[1].hallwayBeginningX = storage[2].Doors[1].hallwayBeginningX - 1;
+      //world[storage[2].Doors[1].hallwayBeginningX][storage[2].Doors[1].hallwayBeginningY][storage[2].Doors[1].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[2].Doors[1].x][storage[2].Doors[1].y][storage[2].Doors[1].z] = floorShade;
+         world[storage[2].Doors[1].hallwayBeginningX][storage[2].Doors[1].hallwayBeginningY][storage[2].Doors[1].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[2].Doors[1].x][storage[2].Doors[1].y][storage[2].Doors[1].z] = floorColour;
+         world[storage[2].Doors[1].hallwayBeginningX][storage[2].Doors[1].hallwayBeginningY][storage[2].Doors[1].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[2].Doors[1].x][storage[2].Doors[1].y + setHallWayWallHeight - 1][storage[2].Doors[1].z] = wallColour;
+      world[storage[2].Doors[1].hallwayBeginningX][storage[2].Doors[1].hallwayBeginningY + setHallWayWallHeight - 1][storage[2].Doors[1].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[2].Doors[1].x][storage[2].Doors[1].y + wallHeight][storage[2].Doors[1].z - 1] = wallColour;
-         world[storage[2].Doors[1].x][storage[2].Doors[1].y + wallHeight][storage[2].Doors[1].z + 1] = wallColour;
+         world[storage[2].Doors[1].hallwayBeginningX][storage[2].Doors[1].hallwayBeginningY + wallHeight][storage[2].Doors[1].hallwayBeginningZ - 1] = wallColour;
+         world[storage[2].Doors[1].hallwayBeginningX][storage[2].Doors[1].hallwayBeginningY + wallHeight][storage[2].Doors[1].hallwayBeginningZ + 1] = wallColour;
       }
    }
 }
@@ -3824,19 +3824,19 @@ void buildHallwayFromRoom3ToRoom4(Room storage[9], int floorColour, int wallColo
 {
    //ID: Room3 to Room4
    //Detection of a path across from the door
-   for (int check1 = storage[3].Doors[1].x + 1; check1 < storage[4].Doors[1].x + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 4
+   for (int check1 = storage[3].Doors[1].hallwayBeginningX + 1; check1 < storage[4].Doors[1].hallwayBeginningX + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 4
    {
       //Colour randomizer
       int randColour = (rand() % ((2 - 1) + 1)) + 1;
       for (int check2 = storage[4].startingZ; check2 < storage[4].startingZ + storage[4].zLength; check2++) //Scans Z //This should be the range of the starting X and xLength of the connecting door which is the door of Room 4
       {
          //This is a test line
-         //world[check1][storage[0].Doors[0].y + 6][check2] = 4;
+         //world[check1][storage[0].Doors[0].hallwayBeginningY + 6][check2] = 4;
 
-         if (world[check1][storage[3].Doors[1].y][check2] != 0)
+         if (world[check1][storage[3].Doors[1].hallwayBeginningY][check2] != 0)
          {
             int stopX = check1; // + 1? Need a + 1 to accunt for the new walls added
-            int stopY = storage[3].Doors[1].y;
+            int stopY = storage[3].Doors[1].hallwayBeginningY;
             int stopZ = check2;
 
             //Fixed the position of the other door entrance to the bridge
@@ -3847,10 +3847,10 @@ void buildHallwayFromRoom3ToRoom4(Room storage[9], int floorColour, int wallColo
             //Builds the wall around the hallway - extends the walls by two from the starting end
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
-               world[storage[3].Doors[1].x + 1][storage[3].Doors[1].y + wallHeight][storage[3].Doors[1].z - 1] = wallColour;
-               world[storage[3].Doors[1].x + 1][storage[3].Doors[1].y + wallHeight][storage[3].Doors[1].z + 1] = wallColour;
-               world[storage[3].Doors[1].x + 2][storage[3].Doors[1].y + wallHeight][storage[3].Doors[1].z - 1] = wallColour;
-               world[storage[3].Doors[1].x + 2][storage[3].Doors[1].y + wallHeight][storage[3].Doors[1].z + 1] = wallColour;
+               world[storage[3].Doors[1].hallwayBeginningX + 1][storage[3].Doors[1].hallwayBeginningY + wallHeight][storage[3].Doors[1].hallwayBeginningZ - 1] = wallColour;
+               world[storage[3].Doors[1].hallwayBeginningX + 1][storage[3].Doors[1].hallwayBeginningY + wallHeight][storage[3].Doors[1].hallwayBeginningZ + 1] = wallColour;
+               world[storage[3].Doors[1].hallwayBeginningX + 2][storage[3].Doors[1].hallwayBeginningY + wallHeight][storage[3].Doors[1].hallwayBeginningZ - 1] = wallColour;
+               world[storage[3].Doors[1].hallwayBeginningX + 2][storage[3].Doors[1].hallwayBeginningY + wallHeight][storage[3].Doors[1].hallwayBeginningZ + 1] = wallColour;
 
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ + 1] = wallColour;
@@ -3860,11 +3860,11 @@ void buildHallwayFromRoom3ToRoom4(Room storage[9], int floorColour, int wallColo
 
             //Build the sideways bridge
             //Leftside, rightside or equal case check
-            if (storage[3].Doors[1].z < fixedStopZ)
+            if (storage[3].Doors[1].hallwayBeginningZ < fixedStopZ)
             {
                //Rightside case
                //build postive x
-               for (int build = storage[3].Doors[1].z; build <= fixedStopZ; build++)
+               for (int build = storage[3].Doors[1].hallwayBeginningZ; build <= fixedStopZ; build++)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[stopX][stopY][build] = floorColour;
@@ -3896,11 +3896,11 @@ void buildHallwayFromRoom3ToRoom4(Room storage[9], int floorColour, int wallColo
                   world[stopX][stopY + setHallWayWallHeight - 1][build] = wallColour;
                }
             }
-            else if (storage[3].Doors[1].z > fixedStopZ)
+            else if (storage[3].Doors[1].hallwayBeginningZ > fixedStopZ)
             {
                //Leftside case
                //build negative x
-               for (int build = storage[3].Doors[1].z; build >= fixedStopZ; build--)
+               for (int build = storage[3].Doors[1].hallwayBeginningZ; build >= fixedStopZ; build--)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[stopX][stopY][build] = floorColour;
@@ -3938,13 +3938,13 @@ void buildHallwayFromRoom3ToRoom4(Room storage[9], int floorColour, int wallColo
             }
 
             //Fixing the door entrance to the bridge
-            world[storage[3].Doors[1].x][storage[3].Doors[1].y][storage[3].Doors[1].z] = floorColour;
+            world[storage[3].Doors[1].hallwayBeginningX][storage[3].Doors[1].hallwayBeginningY][storage[3].Doors[1].hallwayBeginningZ] = floorColour;
             world[fixedStopX][fixedStopY][fixedStopZ] = floorColour;
 
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
                //Clears the entrance to the bridge
-               world[storage[3].Doors[1].x][storage[3].Doors[1].y + 1 + wallHeight][storage[3].Doors[1].z] = 0;
+               world[storage[3].Doors[1].hallwayBeginningX][storage[3].Doors[1].hallwayBeginningY + 1 + wallHeight][storage[3].Doors[1].hallwayBeginningZ] = 0;
 
                //This is a test line
                //world[stopX][stopY + 5 + wallHeight][stopZ] = 3;
@@ -3954,7 +3954,7 @@ void buildHallwayFromRoom3ToRoom4(Room storage[9], int floorColour, int wallColo
             }
 
             //Build the ceiling to the hallway's bridge
-            world[storage[3].Doors[1].x][storage[3].Doors[1].y + setHallWayWallHeight - 1][storage[3].Doors[1].z] = wallColour;
+            world[storage[3].Doors[1].hallwayBeginningX][storage[3].Doors[1].hallwayBeginningY + setHallWayWallHeight - 1][storage[3].Doors[1].hallwayBeginningZ] = wallColour;
             world[fixedStopX][fixedStopY + setHallWayWallHeight - 1][fixedStopZ] = wallColour;
 
             return;
@@ -3962,53 +3962,53 @@ void buildHallwayFromRoom3ToRoom4(Room storage[9], int floorColour, int wallColo
       }
 
       //Increases the hallway length by one
-      storage[3].Doors[1].x = storage[3].Doors[1].x + 1;
-      //world[storage[3].Doors[1].x][storage[3].Doors[1].y][storage[3].Doors[1].z] = floorColour;
+      storage[3].Doors[1].hallwayBeginningX = storage[3].Doors[1].hallwayBeginningX + 1;
+      //world[storage[3].Doors[1].hallwayBeginningX][storage[3].Doors[1].hallwayBeginningY][storage[3].Doors[1].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[3].Doors[1].x][storage[3].Doors[1].y][storage[3].Doors[1].z] = floorShade;
+         world[storage[3].Doors[1].hallwayBeginningX][storage[3].Doors[1].hallwayBeginningY][storage[3].Doors[1].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[3].Doors[1].x][storage[3].Doors[1].y][storage[3].Doors[1].z] = floorColour;
+         world[storage[3].Doors[1].hallwayBeginningX][storage[3].Doors[1].hallwayBeginningY][storage[3].Doors[1].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[3].Doors[1].x][storage[3].Doors[1].y + setHallWayWallHeight - 1][storage[3].Doors[1].z] = wallColour;
+      world[storage[3].Doors[1].hallwayBeginningX][storage[3].Doors[1].hallwayBeginningY + setHallWayWallHeight - 1][storage[3].Doors[1].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[3].Doors[1].x][storage[3].Doors[1].y + wallHeight][storage[3].Doors[1].z - 1] = wallColour;
-         world[storage[3].Doors[1].x][storage[3].Doors[1].y + wallHeight][storage[3].Doors[1].z + 1] = wallColour;
+         world[storage[3].Doors[1].hallwayBeginningX][storage[3].Doors[1].hallwayBeginningY + wallHeight][storage[3].Doors[1].hallwayBeginningZ - 1] = wallColour;
+         world[storage[3].Doors[1].hallwayBeginningX][storage[3].Doors[1].hallwayBeginningY + wallHeight][storage[3].Doors[1].hallwayBeginningZ + 1] = wallColour;
       }
 
       //Increases the opposite hallway of the top door by one towards the top door
-      storage[4].Doors[1].x = storage[4].Doors[1].x - 1;
-      //world[storage[4].Doors[1].x][storage[4].Doors[1].y][storage[4].Doors[1].z] = floorColour;
+      storage[4].Doors[1].hallwayBeginningX = storage[4].Doors[1].hallwayBeginningX - 1;
+      //world[storage[4].Doors[1].hallwayBeginningX][storage[4].Doors[1].hallwayBeginningY][storage[4].Doors[1].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[4].Doors[1].x][storage[4].Doors[1].y][storage[4].Doors[1].z] = floorShade;
+         world[storage[4].Doors[1].hallwayBeginningX][storage[4].Doors[1].hallwayBeginningY][storage[4].Doors[1].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[4].Doors[1].x][storage[4].Doors[1].y][storage[4].Doors[1].z] = floorColour;
+         world[storage[4].Doors[1].hallwayBeginningX][storage[4].Doors[1].hallwayBeginningY][storage[4].Doors[1].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[4].Doors[1].x][storage[4].Doors[1].y + setHallWayWallHeight - 1][storage[4].Doors[1].z] = wallColour;
+      world[storage[4].Doors[1].hallwayBeginningX][storage[4].Doors[1].hallwayBeginningY + setHallWayWallHeight - 1][storage[4].Doors[1].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[4].Doors[1].x][storage[4].Doors[1].y + wallHeight][storage[4].Doors[1].z - 1] = wallColour;
-         world[storage[4].Doors[1].x][storage[4].Doors[1].y + wallHeight][storage[4].Doors[1].z + 1] = wallColour;
+         world[storage[4].Doors[1].hallwayBeginningX][storage[4].Doors[1].hallwayBeginningY + wallHeight][storage[4].Doors[1].hallwayBeginningZ - 1] = wallColour;
+         world[storage[4].Doors[1].hallwayBeginningX][storage[4].Doors[1].hallwayBeginningY + wallHeight][storage[4].Doors[1].hallwayBeginningZ + 1] = wallColour;
       }
    }
 }
@@ -4017,19 +4017,19 @@ void buildHallwayFromRoom4ToRoom5(Room storage[9], int floorColour, int wallColo
 {
    //ID: Room4 to Room5
    //Detection of a path across from the door
-   for (int check1 = storage[4].Doors[3].x + 1; check1 < storage[5].Doors[1].x + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 5
+   for (int check1 = storage[4].Doors[3].hallwayBeginningX + 1; check1 < storage[5].Doors[1].hallwayBeginningX + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 5
    {
       //Colour randomizer
       int randColour = (rand() % ((2 - 1) + 1)) + 1;
       for (int check2 = storage[5].startingZ; check2 < storage[5].startingZ + storage[5].zLength; check2++) //Scans Z //This should be the range of the starting X and xLength of the connecting door which is the door of Room 5
       {
          //This is a test line
-         //world[check1][storage[0].Doors[0].y + 6][check2] = 4;
+         //world[check1][storage[0].Doors[0].hallwayBeginningY + 6][check2] = 4;
 
-         if (world[check1][storage[4].Doors[3].y][check2] != 0)
+         if (world[check1][storage[4].Doors[3].hallwayBeginningY][check2] != 0)
          {
             int stopX = check1; // + 1? Need a + 1 to accunt for the new walls added
-            int stopY = storage[4].Doors[3].y;
+            int stopY = storage[4].Doors[3].hallwayBeginningY;
             int stopZ = check2;
 
             //Fixed the position of the other door entrance to the bridge
@@ -4040,10 +4040,10 @@ void buildHallwayFromRoom4ToRoom5(Room storage[9], int floorColour, int wallColo
             //Builds the wall around the hallway - extends the walls by two from the starting end
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
-               world[storage[4].Doors[3].x + 1][storage[4].Doors[3].y + wallHeight][storage[4].Doors[3].z - 1] = wallColour;
-               world[storage[4].Doors[3].x + 1][storage[4].Doors[3].y + wallHeight][storage[4].Doors[3].z + 1] = wallColour;
-               world[storage[4].Doors[3].x + 2][storage[4].Doors[3].y + wallHeight][storage[4].Doors[3].z - 1] = wallColour;
-               world[storage[4].Doors[3].x + 2][storage[4].Doors[3].y + wallHeight][storage[4].Doors[3].z + 1] = wallColour;
+               world[storage[4].Doors[3].hallwayBeginningX + 1][storage[4].Doors[3].hallwayBeginningY + wallHeight][storage[4].Doors[3].hallwayBeginningZ - 1] = wallColour;
+               world[storage[4].Doors[3].hallwayBeginningX + 1][storage[4].Doors[3].hallwayBeginningY + wallHeight][storage[4].Doors[3].hallwayBeginningZ + 1] = wallColour;
+               world[storage[4].Doors[3].hallwayBeginningX + 2][storage[4].Doors[3].hallwayBeginningY + wallHeight][storage[4].Doors[3].hallwayBeginningZ - 1] = wallColour;
+               world[storage[4].Doors[3].hallwayBeginningX + 2][storage[4].Doors[3].hallwayBeginningY + wallHeight][storage[4].Doors[3].hallwayBeginningZ + 1] = wallColour;
 
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ + 1] = wallColour;
@@ -4053,11 +4053,11 @@ void buildHallwayFromRoom4ToRoom5(Room storage[9], int floorColour, int wallColo
 
             //Build the sideways bridge
             //Leftside, rightside or equal case check
-            if (storage[4].Doors[3].z < fixedStopZ)
+            if (storage[4].Doors[3].hallwayBeginningZ < fixedStopZ)
             {
                //Rightside case
                //build postive x
-               for (int build = storage[4].Doors[3].z; build <= fixedStopZ; build++)
+               for (int build = storage[4].Doors[3].hallwayBeginningZ; build <= fixedStopZ; build++)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[stopX][stopY][build] = floorColour;
@@ -4089,11 +4089,11 @@ void buildHallwayFromRoom4ToRoom5(Room storage[9], int floorColour, int wallColo
                   world[stopX][stopY + setHallWayWallHeight - 1][build] = wallColour;
                }
             }
-            else if (storage[4].Doors[3].z > fixedStopZ)
+            else if (storage[4].Doors[3].hallwayBeginningZ > fixedStopZ)
             {
                //Leftside case
                //build negative x
-               for (int build = storage[4].Doors[3].z; build >= fixedStopZ; build--)
+               for (int build = storage[4].Doors[3].hallwayBeginningZ; build >= fixedStopZ; build--)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[stopX][stopY][build] = floorColour;
@@ -4131,13 +4131,13 @@ void buildHallwayFromRoom4ToRoom5(Room storage[9], int floorColour, int wallColo
             }
 
             //Fixing the door entrance to the bridge
-            world[storage[4].Doors[3].x][storage[4].Doors[3].y][storage[4].Doors[3].z] = floorColour;
+            world[storage[4].Doors[3].hallwayBeginningX][storage[4].Doors[3].hallwayBeginningY][storage[4].Doors[3].hallwayBeginningZ] = floorColour;
             world[fixedStopX][fixedStopY][fixedStopZ] = floorColour;
 
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
                //Clears the entrance to the bridge
-               world[storage[4].Doors[3].x][storage[4].Doors[3].y + 1 + wallHeight][storage[4].Doors[3].z] = 0;
+               world[storage[4].Doors[3].hallwayBeginningX][storage[4].Doors[3].hallwayBeginningY + 1 + wallHeight][storage[4].Doors[3].hallwayBeginningZ] = 0;
 
                //This is a test line
                //world[stopX][stopY + 5 + wallHeight][stopZ] = 3;
@@ -4147,7 +4147,7 @@ void buildHallwayFromRoom4ToRoom5(Room storage[9], int floorColour, int wallColo
             }
 
             //Build the ceiling to the hallway's bridge
-            world[storage[4].Doors[3].x][storage[4].Doors[3].y + setHallWayWallHeight - 1][storage[4].Doors[3].z] = wallColour;
+            world[storage[4].Doors[3].hallwayBeginningX][storage[4].Doors[3].hallwayBeginningY + setHallWayWallHeight - 1][storage[4].Doors[3].hallwayBeginningZ] = wallColour;
             world[fixedStopX][fixedStopY + setHallWayWallHeight - 1][fixedStopZ] = wallColour;
 
             return;
@@ -4155,53 +4155,53 @@ void buildHallwayFromRoom4ToRoom5(Room storage[9], int floorColour, int wallColo
       }
 
       //Increases the hallway length by one
-      storage[4].Doors[3].x = storage[4].Doors[3].x + 1;
-      //world[storage[4].Doors[3].x][storage[4].Doors[3].y][storage[4].Doors[3].z] = floorColour;
+      storage[4].Doors[3].hallwayBeginningX = storage[4].Doors[3].hallwayBeginningX + 1;
+      //world[storage[4].Doors[3].hallwayBeginningX][storage[4].Doors[3].hallwayBeginningY][storage[4].Doors[3].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[4].Doors[3].x][storage[4].Doors[3].y][storage[4].Doors[3].z] = floorShade;
+         world[storage[4].Doors[3].hallwayBeginningX][storage[4].Doors[3].hallwayBeginningY][storage[4].Doors[3].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[4].Doors[3].x][storage[4].Doors[3].y][storage[4].Doors[3].z] = floorColour;
+         world[storage[4].Doors[3].hallwayBeginningX][storage[4].Doors[3].hallwayBeginningY][storage[4].Doors[3].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[4].Doors[3].x][storage[4].Doors[3].y + setHallWayWallHeight - 1][storage[4].Doors[3].z] = wallColour;
+      world[storage[4].Doors[3].hallwayBeginningX][storage[4].Doors[3].hallwayBeginningY + setHallWayWallHeight - 1][storage[4].Doors[3].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[4].Doors[3].x][storage[4].Doors[3].y + wallHeight][storage[4].Doors[3].z - 1] = wallColour;
-         world[storage[4].Doors[3].x][storage[4].Doors[3].y + wallHeight][storage[4].Doors[3].z + 1] = wallColour;
+         world[storage[4].Doors[3].hallwayBeginningX][storage[4].Doors[3].hallwayBeginningY + wallHeight][storage[4].Doors[3].hallwayBeginningZ - 1] = wallColour;
+         world[storage[4].Doors[3].hallwayBeginningX][storage[4].Doors[3].hallwayBeginningY + wallHeight][storage[4].Doors[3].hallwayBeginningZ + 1] = wallColour;
       }
 
       //Increases the opposite hallway of the top door by one towards the top door
-      storage[5].Doors[1].x = storage[5].Doors[1].x - 1;
-      //world[storage[5].Doors[1].x][storage[5].Doors[1].y][storage[5].Doors[1].z] = floorColour;
+      storage[5].Doors[1].hallwayBeginningX = storage[5].Doors[1].hallwayBeginningX - 1;
+      //world[storage[5].Doors[1].hallwayBeginningX][storage[5].Doors[1].hallwayBeginningY][storage[5].Doors[1].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[5].Doors[1].x][storage[5].Doors[1].y][storage[5].Doors[1].z] = floorShade;
+         world[storage[5].Doors[1].hallwayBeginningX][storage[5].Doors[1].hallwayBeginningY][storage[5].Doors[1].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[5].Doors[1].x][storage[5].Doors[1].y][storage[5].Doors[1].z] = floorColour;
+         world[storage[5].Doors[1].hallwayBeginningX][storage[5].Doors[1].hallwayBeginningY][storage[5].Doors[1].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[5].Doors[1].x][storage[5].Doors[1].y + setHallWayWallHeight - 1][storage[5].Doors[1].z] = wallColour;
+      world[storage[5].Doors[1].hallwayBeginningX][storage[5].Doors[1].hallwayBeginningY + setHallWayWallHeight - 1][storage[5].Doors[1].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[5].Doors[1].x][storage[5].Doors[1].y + wallHeight][storage[5].Doors[1].z - 1] = wallColour;
-         world[storage[5].Doors[1].x][storage[5].Doors[1].y + wallHeight][storage[5].Doors[1].z + 1] = wallColour;
+         world[storage[5].Doors[1].hallwayBeginningX][storage[5].Doors[1].hallwayBeginningY + wallHeight][storage[5].Doors[1].hallwayBeginningZ - 1] = wallColour;
+         world[storage[5].Doors[1].hallwayBeginningX][storage[5].Doors[1].hallwayBeginningY + wallHeight][storage[5].Doors[1].hallwayBeginningZ + 1] = wallColour;
       }
    }
 }
@@ -4210,19 +4210,19 @@ void buildHallwayFromRoom6ToRoom7(Room storage[9], int floorColour, int wallColo
 {
    //ID: Room6 to Room7
    //Detection of a path across from the door
-   for (int check1 = storage[6].Doors[1].x + 1; check1 < storage[7].Doors[2].x + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 7
+   for (int check1 = storage[6].Doors[1].hallwayBeginningX + 1; check1 < storage[7].Doors[2].hallwayBeginningX + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 7
    {
       //Colour randomizer
       int randColour = (rand() % ((2 - 1) + 1)) + 1;
       for (int check2 = storage[7].startingZ; check2 < storage[7].startingZ + storage[7].zLength; check2++) //Scans Z //This should be the range of the starting X and xLength of the connecting door which is the door of Room 7
       {
          //This is a test line
-         //world[check1][storage[0].Doors[0].y + 6][check2] = 4;
+         //world[check1][storage[0].Doors[0].hallwayBeginningY + 6][check2] = 4;
 
-         if (world[check1][storage[6].Doors[1].y][check2] != 0)
+         if (world[check1][storage[6].Doors[1].hallwayBeginningY][check2] != 0)
          {
             int stopX = check1; // + 1? Need a + 1 to accunt for the new walls added
-            int stopY = storage[6].Doors[1].y;
+            int stopY = storage[6].Doors[1].hallwayBeginningY;
             int stopZ = check2;
 
             //Fixed the position of the other door entrance to the bridge
@@ -4233,10 +4233,10 @@ void buildHallwayFromRoom6ToRoom7(Room storage[9], int floorColour, int wallColo
             //Builds the wall around the hallway - extends the walls by two from the starting end
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
-               world[storage[6].Doors[1].x + 1][storage[6].Doors[1].y + wallHeight][storage[6].Doors[1].z - 1] = wallColour;
-               world[storage[6].Doors[1].x + 1][storage[6].Doors[1].y + wallHeight][storage[6].Doors[1].z + 1] = wallColour;
-               world[storage[6].Doors[1].x + 2][storage[6].Doors[1].y + wallHeight][storage[6].Doors[1].z - 1] = wallColour;
-               world[storage[6].Doors[1].x + 2][storage[6].Doors[1].y + wallHeight][storage[6].Doors[1].z + 1] = wallColour;
+               world[storage[6].Doors[1].hallwayBeginningX + 1][storage[6].Doors[1].hallwayBeginningY + wallHeight][storage[6].Doors[1].hallwayBeginningZ - 1] = wallColour;
+               world[storage[6].Doors[1].hallwayBeginningX + 1][storage[6].Doors[1].hallwayBeginningY + wallHeight][storage[6].Doors[1].hallwayBeginningZ + 1] = wallColour;
+               world[storage[6].Doors[1].hallwayBeginningX + 2][storage[6].Doors[1].hallwayBeginningY + wallHeight][storage[6].Doors[1].hallwayBeginningZ - 1] = wallColour;
+               world[storage[6].Doors[1].hallwayBeginningX + 2][storage[6].Doors[1].hallwayBeginningY + wallHeight][storage[6].Doors[1].hallwayBeginningZ + 1] = wallColour;
 
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ + 1] = wallColour;
@@ -4246,11 +4246,11 @@ void buildHallwayFromRoom6ToRoom7(Room storage[9], int floorColour, int wallColo
 
             //Build the sideways bridge
             //Leftside, rightside or equal case check
-            if (storage[6].Doors[1].z < fixedStopZ)
+            if (storage[6].Doors[1].hallwayBeginningZ < fixedStopZ)
             {
                //Rightside case
                //build postive x
-               for (int build = storage[6].Doors[1].z; build <= fixedStopZ; build++)
+               for (int build = storage[6].Doors[1].hallwayBeginningZ; build <= fixedStopZ; build++)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[stopX][stopY][build] = floorColour;
@@ -4282,11 +4282,11 @@ void buildHallwayFromRoom6ToRoom7(Room storage[9], int floorColour, int wallColo
                   world[stopX][stopY + setHallWayWallHeight - 1][build] = wallColour;
                }
             }
-            else if (storage[6].Doors[1].z > fixedStopZ)
+            else if (storage[6].Doors[1].hallwayBeginningZ > fixedStopZ)
             {
                //Leftside case
                //build negative x
-               for (int build = storage[6].Doors[1].z; build >= fixedStopZ; build--)
+               for (int build = storage[6].Doors[1].hallwayBeginningZ; build >= fixedStopZ; build--)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[stopX][stopY][build] = floorColour;
@@ -4324,13 +4324,13 @@ void buildHallwayFromRoom6ToRoom7(Room storage[9], int floorColour, int wallColo
             }
 
             //Fixing the door entrance to the bridge
-            world[storage[6].Doors[1].x][storage[6].Doors[1].y][storage[6].Doors[1].z] = floorColour;
+            world[storage[6].Doors[1].hallwayBeginningX][storage[6].Doors[1].hallwayBeginningY][storage[6].Doors[1].hallwayBeginningZ] = floorColour;
             world[fixedStopX][fixedStopY][fixedStopZ] = floorColour;
 
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
                //Clears the entrance to the bridge
-               world[storage[6].Doors[1].x][storage[6].Doors[1].y + 1 + wallHeight][storage[6].Doors[1].z] = 0;
+               world[storage[6].Doors[1].hallwayBeginningX][storage[6].Doors[1].hallwayBeginningY + 1 + wallHeight][storage[6].Doors[1].hallwayBeginningZ] = 0;
 
                //This is a test line
                //world[stopX][stopY + 5 + wallHeight][stopZ] = 3;
@@ -4340,7 +4340,7 @@ void buildHallwayFromRoom6ToRoom7(Room storage[9], int floorColour, int wallColo
             }
 
             //Build the ceiling to the hallway's bridge
-            world[storage[6].Doors[1].x][storage[6].Doors[1].y + setHallWayWallHeight - 1][storage[6].Doors[1].z] = wallColour;
+            world[storage[6].Doors[1].hallwayBeginningX][storage[6].Doors[1].hallwayBeginningY + setHallWayWallHeight - 1][storage[6].Doors[1].hallwayBeginningZ] = wallColour;
             world[fixedStopX][fixedStopY + setHallWayWallHeight - 1][fixedStopZ] = wallColour;
 
             return;
@@ -4348,53 +4348,53 @@ void buildHallwayFromRoom6ToRoom7(Room storage[9], int floorColour, int wallColo
       }
 
       //Increases the hallway length by one
-      storage[6].Doors[1].x = storage[6].Doors[1].x + 1;
-      //world[storage[6].Doors[1].x][storage[6].Doors[1].y][storage[6].Doors[1].z] = floorColour;
+      storage[6].Doors[1].hallwayBeginningX = storage[6].Doors[1].hallwayBeginningX + 1;
+      //world[storage[6].Doors[1].hallwayBeginningX][storage[6].Doors[1].hallwayBeginningY][storage[6].Doors[1].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[6].Doors[1].x][storage[6].Doors[1].y][storage[6].Doors[1].z] = floorShade;
+         world[storage[6].Doors[1].hallwayBeginningX][storage[6].Doors[1].hallwayBeginningY][storage[6].Doors[1].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[6].Doors[1].x][storage[6].Doors[1].y][storage[6].Doors[1].z] = floorColour;
+         world[storage[6].Doors[1].hallwayBeginningX][storage[6].Doors[1].hallwayBeginningY][storage[6].Doors[1].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[6].Doors[1].x][storage[6].Doors[1].y + setHallWayWallHeight - 1][storage[6].Doors[1].z] = wallColour;
+      world[storage[6].Doors[1].hallwayBeginningX][storage[6].Doors[1].hallwayBeginningY + setHallWayWallHeight - 1][storage[6].Doors[1].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[6].Doors[1].x][storage[6].Doors[1].y + wallHeight][storage[6].Doors[1].z - 1] = wallColour;
-         world[storage[6].Doors[1].x][storage[6].Doors[1].y + wallHeight][storage[6].Doors[1].z + 1] = wallColour;
+         world[storage[6].Doors[1].hallwayBeginningX][storage[6].Doors[1].hallwayBeginningY + wallHeight][storage[6].Doors[1].hallwayBeginningZ - 1] = wallColour;
+         world[storage[6].Doors[1].hallwayBeginningX][storage[6].Doors[1].hallwayBeginningY + wallHeight][storage[6].Doors[1].hallwayBeginningZ + 1] = wallColour;
       }
 
       //Increases the opposite hallway of the top door by one towards the top door
-      storage[7].Doors[2].x = storage[7].Doors[2].x - 1;
-      //world[storage[7].Doors[2].x][storage[7].Doors[2].y][storage[7].Doors[2].z] = floorColour;
+      storage[7].Doors[2].hallwayBeginningX = storage[7].Doors[2].hallwayBeginningX - 1;
+      //world[storage[7].Doors[2].hallwayBeginningX][storage[7].Doors[2].hallwayBeginningY][storage[7].Doors[2].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[7].Doors[2].x][storage[7].Doors[2].y][storage[7].Doors[2].z] = floorShade;
+         world[storage[7].Doors[2].hallwayBeginningX][storage[7].Doors[2].hallwayBeginningY][storage[7].Doors[2].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[7].Doors[2].x][storage[7].Doors[2].y][storage[7].Doors[2].z] = floorColour;
+         world[storage[7].Doors[2].hallwayBeginningX][storage[7].Doors[2].hallwayBeginningY][storage[7].Doors[2].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[7].Doors[2].x][storage[7].Doors[2].y + setHallWayWallHeight - 1][storage[7].Doors[2].z] = wallColour;
+      world[storage[7].Doors[2].hallwayBeginningX][storage[7].Doors[2].hallwayBeginningY + setHallWayWallHeight - 1][storage[7].Doors[2].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[7].Doors[2].x][storage[7].Doors[2].y + wallHeight][storage[7].Doors[2].z - 1] = wallColour;
-         world[storage[7].Doors[2].x][storage[7].Doors[2].y + wallHeight][storage[7].Doors[2].z + 1] = wallColour;
+         world[storage[7].Doors[2].hallwayBeginningX][storage[7].Doors[2].hallwayBeginningY + wallHeight][storage[7].Doors[2].hallwayBeginningZ - 1] = wallColour;
+         world[storage[7].Doors[2].hallwayBeginningX][storage[7].Doors[2].hallwayBeginningY + wallHeight][storage[7].Doors[2].hallwayBeginningZ + 1] = wallColour;
       }
    }
 }
@@ -4403,19 +4403,19 @@ void buildHallwayFromRoom7ToRoom8(Room storage[9], int floorColour, int wallColo
 {
    //ID: Room7 to Room8
    //Detection of a path across from the door
-   for (int check1 = storage[7].Doors[1].x + 1; check1 < storage[8].Doors[1].x + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 8
+   for (int check1 = storage[7].Doors[1].hallwayBeginningX + 1; check1 < storage[8].Doors[1].hallwayBeginningX + 2; check1++) //The +33 should be replace with the Z location of the connecting door which is the door of Room 8
    {
       //Colour randomizer
       int randColour = (rand() % ((2 - 1) + 1)) + 1;
       for (int check2 = storage[8].startingZ; check2 < storage[8].startingZ + storage[8].zLength; check2++) //Sacns Z //This should be the range of the starting X and xLength of the connecting door which is the door of Room 8
       {
          //This is a test line
-         //world[check1][storage[0].Doors[0].y + 6][check2] = 4;
+         //world[check1][storage[0].Doors[0].hallwayBeginningY + 6][check2] = 4;
 
-         if (world[check1][storage[7].Doors[1].y][check2] != 0)
+         if (world[check1][storage[7].Doors[1].hallwayBeginningY][check2] != 0)
          {
             int stopX = check1; // + 1? Need a + 1 to accunt for the new walls added
-            int stopY = storage[7].Doors[1].y;
+            int stopY = storage[7].Doors[1].hallwayBeginningY;
             int stopZ = check2;
 
             //Fixed the position of the other door entrance to the bridge
@@ -4426,10 +4426,10 @@ void buildHallwayFromRoom7ToRoom8(Room storage[9], int floorColour, int wallColo
             //Builds the wall around the hallway - extends the walls by two from the starting end
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
-               world[storage[7].Doors[1].x + 1][storage[7].Doors[1].y + wallHeight][storage[7].Doors[1].z - 1] = wallColour;
-               world[storage[7].Doors[1].x + 1][storage[7].Doors[1].y + wallHeight][storage[7].Doors[1].z + 1] = wallColour;
-               world[storage[7].Doors[1].x + 2][storage[7].Doors[1].y + wallHeight][storage[7].Doors[1].z - 1] = wallColour;
-               world[storage[7].Doors[1].x + 2][storage[7].Doors[1].y + wallHeight][storage[7].Doors[1].z + 1] = wallColour;
+               world[storage[7].Doors[1].hallwayBeginningX + 1][storage[7].Doors[1].hallwayBeginningY + wallHeight][storage[7].Doors[1].hallwayBeginningZ - 1] = wallColour;
+               world[storage[7].Doors[1].hallwayBeginningX + 1][storage[7].Doors[1].hallwayBeginningY + wallHeight][storage[7].Doors[1].hallwayBeginningZ + 1] = wallColour;
+               world[storage[7].Doors[1].hallwayBeginningX + 2][storage[7].Doors[1].hallwayBeginningY + wallHeight][storage[7].Doors[1].hallwayBeginningZ - 1] = wallColour;
+               world[storage[7].Doors[1].hallwayBeginningX + 2][storage[7].Doors[1].hallwayBeginningY + wallHeight][storage[7].Doors[1].hallwayBeginningZ + 1] = wallColour;
 
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ - 1] = wallColour;
                world[fixedStopX - 1][fixedStopY + wallHeight][fixedStopZ + 1] = wallColour;
@@ -4439,11 +4439,11 @@ void buildHallwayFromRoom7ToRoom8(Room storage[9], int floorColour, int wallColo
 
             //Build the sideways bridge
             //Leftside, rightside or equal case check
-            if (storage[7].Doors[1].z < fixedStopZ)
+            if (storage[7].Doors[1].hallwayBeginningZ < fixedStopZ)
             {
                //Rightside case
                //build postive x
-               for (int build = storage[7].Doors[1].z; build <= fixedStopZ; build++)
+               for (int build = storage[7].Doors[1].hallwayBeginningZ; build <= fixedStopZ; build++)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[stopX][stopY][build] = floorColour;
@@ -4475,11 +4475,11 @@ void buildHallwayFromRoom7ToRoom8(Room storage[9], int floorColour, int wallColo
                   world[stopX][stopY + setHallWayWallHeight - 1][build] = wallColour;
                }
             }
-            else if (storage[7].Doors[1].z > fixedStopZ)
+            else if (storage[7].Doors[1].hallwayBeginningZ > fixedStopZ)
             {
                //Leftside case
                //build negative x
-               for (int build = storage[7].Doors[1].z; build >= fixedStopZ; build--)
+               for (int build = storage[7].Doors[1].hallwayBeginningZ; build >= fixedStopZ; build--)
                {
                   //Builds the bridge to the otherside of the hallway
                   //world[stopX][stopY][build] = floorColour;
@@ -4517,13 +4517,13 @@ void buildHallwayFromRoom7ToRoom8(Room storage[9], int floorColour, int wallColo
             }
 
             //Fixing the door entrance to the bridge
-            world[storage[7].Doors[1].x][storage[7].Doors[1].y][storage[7].Doors[1].z] = floorColour;
+            world[storage[7].Doors[1].hallwayBeginningX][storage[7].Doors[1].hallwayBeginningY][storage[7].Doors[1].hallwayBeginningZ] = floorColour;
             world[fixedStopX][fixedStopY][fixedStopZ] = floorColour;
 
             for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
             {
                //Clears the entrance to the bridge
-               world[storage[7].Doors[1].x][storage[7].Doors[1].y + 1 + wallHeight][storage[7].Doors[1].z] = 0;
+               world[storage[7].Doors[1].hallwayBeginningX][storage[7].Doors[1].hallwayBeginningY + 1 + wallHeight][storage[7].Doors[1].hallwayBeginningZ] = 0;
 
                //This is a test line
                //world[stopX][stopY + 5 + wallHeight][stopZ] = 3;
@@ -4533,7 +4533,7 @@ void buildHallwayFromRoom7ToRoom8(Room storage[9], int floorColour, int wallColo
             }
 
             //Build the ceiling to the hallway's bridge
-            world[storage[7].Doors[1].x][storage[7].Doors[1].y + setHallWayWallHeight - 1][storage[7].Doors[1].z] = wallColour;
+            world[storage[7].Doors[1].hallwayBeginningX][storage[7].Doors[1].hallwayBeginningY + setHallWayWallHeight - 1][storage[7].Doors[1].hallwayBeginningZ] = wallColour;
             world[fixedStopX][fixedStopY + setHallWayWallHeight - 1][fixedStopZ] = wallColour;
 
             return;
@@ -4541,53 +4541,53 @@ void buildHallwayFromRoom7ToRoom8(Room storage[9], int floorColour, int wallColo
       }
 
       //Increases the hallway length by one
-      storage[7].Doors[1].x = storage[7].Doors[1].x + 1;
-      //world[storage[7].Doors[1].x][storage[7].Doors[1].y][storage[7].Doors[1].z] = floorColour;
+      storage[7].Doors[1].hallwayBeginningX = storage[7].Doors[1].hallwayBeginningX + 1;
+      //world[storage[7].Doors[1].hallwayBeginningX][storage[7].Doors[1].hallwayBeginningY][storage[7].Doors[1].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[7].Doors[1].x][storage[7].Doors[1].y][storage[7].Doors[1].z] = floorShade;
+         world[storage[7].Doors[1].hallwayBeginningX][storage[7].Doors[1].hallwayBeginningY][storage[7].Doors[1].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[7].Doors[1].x][storage[7].Doors[1].y][storage[7].Doors[1].z] = floorColour;
+         world[storage[7].Doors[1].hallwayBeginningX][storage[7].Doors[1].hallwayBeginningY][storage[7].Doors[1].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[7].Doors[1].x][storage[7].Doors[1].y + setHallWayWallHeight - 1][storage[7].Doors[1].z] = wallColour;
+      world[storage[7].Doors[1].hallwayBeginningX][storage[7].Doors[1].hallwayBeginningY + setHallWayWallHeight - 1][storage[7].Doors[1].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[7].Doors[1].x][storage[7].Doors[1].y + wallHeight][storage[7].Doors[1].z - 1] = wallColour;
-         world[storage[7].Doors[1].x][storage[7].Doors[1].y + wallHeight][storage[7].Doors[1].z + 1] = wallColour;
+         world[storage[7].Doors[1].hallwayBeginningX][storage[7].Doors[1].hallwayBeginningY + wallHeight][storage[7].Doors[1].hallwayBeginningZ - 1] = wallColour;
+         world[storage[7].Doors[1].hallwayBeginningX][storage[7].Doors[1].hallwayBeginningY + wallHeight][storage[7].Doors[1].hallwayBeginningZ + 1] = wallColour;
       }
 
       //Increases the opposite hallway of the top door by one towards the top door
-      storage[8].Doors[1].x = storage[8].Doors[1].x - 1;
-      //world[storage[8].Doors[1].x][storage[8].Doors[1].y][storage[8].Doors[1].z] = floorColour;
+      storage[8].Doors[1].hallwayBeginningX = storage[8].Doors[1].hallwayBeginningX - 1;
+      //world[storage[8].Doors[1].hallwayBeginningX][storage[8].Doors[1].hallwayBeginningY][storage[8].Doors[1].hallwayBeginningZ] = floorColour;
 
       //Make the floor of the hallway with random colours
       if (randColour == 1)
       {
-         world[storage[8].Doors[1].x][storage[8].Doors[1].y][storage[8].Doors[1].z] = floorShade;
+         world[storage[8].Doors[1].hallwayBeginningX][storage[8].Doors[1].hallwayBeginningY][storage[8].Doors[1].hallwayBeginningZ] = floorShade;
       }
       else
       {
-         world[storage[8].Doors[1].x][storage[8].Doors[1].y][storage[8].Doors[1].z] = floorColour;
+         world[storage[8].Doors[1].hallwayBeginningX][storage[8].Doors[1].hallwayBeginningY][storage[8].Doors[1].hallwayBeginningZ] = floorColour;
       }
 
       //Build the ceiling of the hallway
-      world[storage[8].Doors[1].x][storage[8].Doors[1].y + setHallWayWallHeight - 1][storage[8].Doors[1].z] = wallColour;
+      world[storage[8].Doors[1].hallwayBeginningX][storage[8].Doors[1].hallwayBeginningY + setHallWayWallHeight - 1][storage[8].Doors[1].hallwayBeginningZ] = wallColour;
 
       //Builds the wall around the hallway
       for (int wallHeight = 0; wallHeight < setHallWayWallHeight; wallHeight++)
       {
          //Need a check for block the middle on the hallway
-         world[storage[8].Doors[1].x][storage[8].Doors[1].y + wallHeight][storage[8].Doors[1].z - 1] = wallColour;
-         world[storage[8].Doors[1].x][storage[8].Doors[1].y + wallHeight][storage[8].Doors[1].z + 1] = wallColour;
+         world[storage[8].Doors[1].hallwayBeginningX][storage[8].Doors[1].hallwayBeginningY + wallHeight][storage[8].Doors[1].hallwayBeginningZ - 1] = wallColour;
+         world[storage[8].Doors[1].hallwayBeginningX][storage[8].Doors[1].hallwayBeginningY + wallHeight][storage[8].Doors[1].hallwayBeginningZ + 1] = wallColour;
       }
    }
 }
