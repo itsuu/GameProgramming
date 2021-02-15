@@ -510,6 +510,10 @@ void draw2D()
    }
 }
 
+int cloud_check = 1;
+int runOnce = 1;
+int cloudCounter = 0;
+
 /*** update() ***/
 /* background process, it is called when there are no other events */
 /* -used to control animations and perform calculations while the  */
@@ -705,6 +709,61 @@ createTube(2, -xx, -yy, -zz, -xx-((x-xx)*25.0), -yy-((y-yy)*25.0), -zz-((z-zz)*2
             goDownStairs(database, (-1 * newX), (-1 * newY), (-1 * newZ));
          }
       }
+
+      float tempt;
+      int cloud_y = 0;
+      int cloudArray1[100];
+      int cloudArray2[100];
+      int cloudArray3[100];
+      //int cloudCounter = 0;
+      float speed = 0;
+
+      //Clouds
+      /*
+      if (cloud_check == 1)
+      {
+         if (runOnce == 1)
+         {
+            runOnce = 0;
+
+            for (int i = 0; i < WORLDX; i++)
+            {
+               for (int j = 0; j < WORLDZ; j++)
+               {
+                  tempt = perlin2d(i, j, 0.05, 4);
+                  tempt = (tempt * 20)+40;
+                  cloud_y = (int)round(tempt);
+
+                  if (cloudCounter < 100 && cloud_y > 50 && cloud_y < 100)
+                  {
+                     cloudArray1[cloudCounter] = i;
+                     cloudArray2[cloudCounter] = cloud_y;
+                     cloudArray3[cloudCounter] = j;
+                     cloudCounter++;
+                  }
+               }
+            }
+
+         }
+         speed += 0.05;
+         for (int k = 0; j < cloudCounter; k++)
+         {
+            float tempt1 = (cloudArray1[k] + speed);
+            int tempt2 = (int)fmod(tempt1, 100);
+
+            float tempt3 = ((cloudArray1[k] + speed) - 1);
+            int tempt4 = (int)fmod(tempt3, 100);
+
+            world[tempt2][cloudArray2[k]][cloudArray3[k]] = 10;
+            world[tempt4][cloudArray2[k]][cloudArray3[k]] = 0;
+         }
+
+         if (speed >= 100)
+         {
+            speed = 0;
+         }
+      }
+      */
    }
 }
 
