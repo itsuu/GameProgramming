@@ -181,10 +181,17 @@ typedef struct worldLevels
    int savedWorld[100][50][100];
    stairCoords stairGoingUp;
    stairCoords stairGoingDown;
+   bool containsWorld;
    //savedViewPoint playersLastPointInWorld;
    //Room level[9];
 
 } worldLevels;
+
+//WORLD DATABASE
+//SHOULD BE DYNAMIC BUT I DONT HAVE THE TIME
+int sizeOfDatabase = 2;
+float cloud_speed = 0;
+int cloud_check = 1;
 
 worldLevels database[2];
 
@@ -208,21 +215,21 @@ void buildHallwayFromRoom4ToRoom5(Room storage[9], int floorColour, int wallColo
 void buildHallwayFromRoom6ToRoom7(Room storage[9], int floorColour, int wallColour, int setHallWayWallHeight, int floorShade);
 void buildHallwayFromRoom7ToRoom8(Room storage[9], int floorColour, int wallColour, int setHallWayWallHeight, int floorShade);
 
-//Helper functions
+//A1 Helper functions
 void setPlayerSpawnLocation();
 float inverseValue(float valueToInverse);
 bool checkAreaAroundViewPoint(float x, float y, float z);
 
-//A2 functions
+//A2 Helper functions
+void initWorldDatabase(worldLevels database[2]);
 void generateOutsideLevel(worldLevels database[2]);
-
 void goDownStairs(worldLevels database[2], float playerX, float playerY, float playerZ);
 void goUpStairs(worldLevels database[2], float playerX, float playerY, float playerZ);
-
-void saveCurrentWorld(int saveWorldToThis[100][50][100]);
+void saveCurrentWorld(int saveWorldToThis[100][50][100], bool *containsWorld);
 void regenerateWorld(int regenerateThisWorld[100][50][100]);
-
 void spawnBesideBlock(worldLevels database[2]);
+
+void generateClouds();
 
 /*** collisionResponse() ***/
 /* -performs collision detection and response */
@@ -277,12 +284,27 @@ void collisionResponse()
                //Moves the view point "1 cube" higher
                setViewPosition((-1 * newX), (-1 * (newY + 2.0)), (-1 * newZ));
 
-               initWorld();
-               generateDungeonLevel(database);
-               saveCurrentWorld(database[1].savedWorld);
-               //regenerateWorld(database[1].savedWorld);
+               if (database[1].containsWorld == false)
+               {
+                  //printf("Generate Dungeon For The First Time\n");
+
+                  //Generate dungeon
+                  initWorld();
+                  generateDungeonLevel(database);
+                  //Saved Dungeon
+                  saveCurrentWorld(database[1].savedWorld, &database[1].containsWorld);
+               }
+               else
+               {
+                  //printf("Dungeon Already Generated\n");
+
+                  initWorld();
+                  regenerateWorld(database[1].savedWorld);
+               }
+
                //Go downstairs
                goDownStairs(database, (-1 * newX), (-1 * newY), (-1 * newZ));
+               cloud_check = 0;
             }
             else if (world[(int)newX][(int)newY][(int)newZ] == 5)
             {
@@ -294,6 +316,7 @@ void collisionResponse()
                regenerateWorld(database[0].savedWorld);
                //Go upstairs
                goUpStairs(database, (-1 * newX), (-1 * newY), (-1 * newZ));
+               cloud_check = 1;
             }
             else
             {
@@ -510,10 +533,6 @@ void draw2D()
    }
 }
 
-int cloud_check = 1;
-int runOnce = 1;
-int cloudCounter = 0;
-
 /*** update() ***/
 /* background process, it is called when there are no other events */
 /* -used to control animations and perform calculations while the  */
@@ -634,7 +653,7 @@ createTube(2, -xx, -yy, -zz, -xx-((x-xx)*25.0), -yy-((y-yy)*25.0), -zz-((z-zz)*2
       int convertedY;
       int convertedZ;
 
-      int check = 0;
+      //int check = 0;
 
       //Gravity
       if (flycontrol == 0)
@@ -664,6 +683,7 @@ createTube(2, -xx, -yy, -zz, -xx-((x-xx)*25.0), -yy-((y-yy)*25.0), -zz-((z-zz)*2
             initWorld();
             regenerateWorld(database[0].savedWorld);
             goUpStairs(database, (-1 * newX), (-1 * newY), (-1 * newZ));
+            cloud_check = 1;
          }
 
          if (world[convertedX][convertedY - 1][convertedZ] == 13)
@@ -671,99 +691,39 @@ createTube(2, -xx, -yy, -zz, -xx-((x-xx)*25.0), -yy-((y-yy)*25.0), -zz-((z-zz)*2
             //Constantly accelerates the character down to the ground
             setViewPosition(newX, newY + 0.3, newZ);
 
-            for (int i = 0; i < WORLDX; i++)
-            {
-               for (int j = 0; j < WORLDY; j++)
-               {
-                  for (int k = 0; k < WORLDZ; k++)
-                  {
+            //printf("0 containsWorld: %d \n", database[0].containsWorld);
+            //printf("1 containsWorld: %d \n", database[1].containsWorld);
 
-                     if (database[1].savedWorld[i][j][k] != 0)
-                     {
-                        check = 1;
-                        break;
-                     }
-                     else
-                     {
-                        check = 0;
-                     }
-                  }
-               }
-            }
-
-            if (check == 0)
+            if (database[1].containsWorld == false)
             {
+               //printf("Generate Dungeon For The First Time\n");
+
                //Generate dungeon
                initWorld();
                generateDungeonLevel(database);
                //Saved Dungeon
-               saveCurrentWorld(database[1].savedWorld);
+               saveCurrentWorld(database[1].savedWorld, &database[1].containsWorld);
             }
             else
             {
+               //printf("Dungeon Already Generated\n");
+
                initWorld();
                regenerateWorld(database[1].savedWorld);
             }
             //regenerateWorld(database[1].savedWorld);
             //Go downstairs
             goDownStairs(database, (-1 * newX), (-1 * newY), (-1 * newZ));
+            cloud_check = 0;
          }
       }
-
-      float tempt;
-      int cloud_y = 0;
-      int cloudArray1[100];
-      int cloudArray2[100];
-      int cloudArray3[100];
-      //int cloudCounter = 0;
-      float speed = 0;
 
       //Clouds
-      /*
+      //Create cloud generaters
       if (cloud_check == 1)
       {
-         if (runOnce == 1)
-         {
-            runOnce = 0;
-
-            for (int i = 0; i < WORLDX; i++)
-            {
-               for (int j = 0; j < WORLDZ; j++)
-               {
-                  tempt = perlin2d(i, j, 0.05, 4);
-                  tempt = (tempt * 20)+40;
-                  cloud_y = (int)round(tempt);
-
-                  if (cloudCounter < 100 && cloud_y > 50 && cloud_y < 100)
-                  {
-                     cloudArray1[cloudCounter] = i;
-                     cloudArray2[cloudCounter] = cloud_y;
-                     cloudArray3[cloudCounter] = j;
-                     cloudCounter++;
-                  }
-               }
-            }
-
-         }
-         speed += 0.05;
-         for (int k = 0; j < cloudCounter; k++)
-         {
-            float tempt1 = (cloudArray1[k] + speed);
-            int tempt2 = (int)fmod(tempt1, 100);
-
-            float tempt3 = ((cloudArray1[k] + speed) - 1);
-            int tempt4 = (int)fmod(tempt3, 100);
-
-            world[tempt2][cloudArray2[k]][cloudArray3[k]] = 10;
-            world[tempt4][cloudArray2[k]][cloudArray3[k]] = 0;
-         }
-
-         if (speed >= 100)
-         {
-            speed = 0;
-         }
+         generateClouds();
       }
-      */
    }
 }
 
@@ -879,21 +839,23 @@ int main(int argc, char **argv)
       //flycontrol = 0;
 
       //THESE ARE TEST LINES
+      //=======================================================
       //saveCurrentWorld(database[0].savedWorld);
       //initWorld();
       //regenerateWorld(database[0].savedWorld);
-
-      generateOutsideLevel(database);
-      saveCurrentWorld(database[0].savedWorld);
-      spawnBesideBlock(database);
-      flycontrol = 0;
       //initWorld();
-
       //generateDungeonLevel(database);
       //saveCurrentWorld(database[1].savedWorld);
       //initWorld();
-
       //regenerateWorld(database[0].savedWorld);
+      //=======================================================
+
+      initWorldDatabase(database);
+      generateOutsideLevel(database);
+      saveCurrentWorld(database[0].savedWorld, &database[0].containsWorld);
+      spawnBesideBlock(database);
+      flycontrol = 0;
+      cloud_check = 1;
 
       /*
       printf("0 up X: %d Y: %d Z: %d \n", database[0].stairGoingUp.x, database[0].stairGoingUp.y, database[0].stairGoingUp.z);
@@ -901,6 +863,9 @@ int main(int argc, char **argv)
 
       printf("1 up X: %d Y: %d Z: %d \n", database[1].stairGoingUp.x, database[1].stairGoingUp.y, database[1].stairGoingUp.z);
       printf("1 down X: %d Y: %d Z: %d \n", database[1].stairGoingDown.x, database[1].stairGoingDown.y, database[1].stairGoingDown.z);
+
+      printf("0 containsWorld: %d \n", database[0].containsWorld);
+      printf("1 containsWorld: %d \n", database[1].containsWorld);
       */
    }
 
@@ -1172,8 +1137,8 @@ void generateDungeonLevel(worldLevels database[2])
 
    //Literally the dumbest but FULLY ERROR catching way to spawn the stairs without it EVER being missing
    int chooseRoomForStairs = (rand() % 9);
-   int stairX = (rand() % ((storage[chooseRoomForStairs].xLength - offsetFromWall) - (offsetFromWall + 1) + 1)) + (offsetFromWall + 1);
-   int stairZ = (rand() % ((storage[chooseRoomForStairs].zLength - offsetFromWall) - (offsetFromWall + 1) + 1)) + (offsetFromWall + 1);
+   int stairX = (rand() % ((storage[chooseRoomForStairs].xLength - (offsetFromWall + 1)) - ((offsetFromWall + 1) + 1) + 1)) + ((offsetFromWall + 1) + 1);
+   int stairZ = (rand() % ((storage[chooseRoomForStairs].zLength - (offsetFromWall + 1)) - ((offsetFromWall + 1) + 1) + 1)) + ((offsetFromWall + 1) + 1);
 
    //printf("DOES THIS RUN??\n");
 
@@ -1184,10 +1149,6 @@ void generateDungeonLevel(worldLevels database[2])
       database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX;
       database[1].stairGoingUp.y = WORLD_Y + 1;
       database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ;
-
-      database[1].stairGoingDown.x = -1;
-      database[1].stairGoingDown.y = -1;
-      database[1].stairGoingDown.z = -1;
    }
    else if (world[storage[chooseRoomForStairs].startingX + stairX + 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ] == 0)
    {
@@ -1196,10 +1157,6 @@ void generateDungeonLevel(worldLevels database[2])
       database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX + 1;
       database[1].stairGoingUp.y = WORLD_Y + 1;
       database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ;
-
-      database[1].stairGoingDown.x = -1;
-      database[1].stairGoingDown.y = -1;
-      database[1].stairGoingDown.z = -1;
    }
    else if (world[storage[chooseRoomForStairs].startingX + stairX][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ + 1] == 0)
    {
@@ -1208,10 +1165,6 @@ void generateDungeonLevel(worldLevels database[2])
       database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX;
       database[1].stairGoingUp.y = WORLD_Y + 1;
       database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ + 1;
-
-      database[1].stairGoingDown.x = -1;
-      database[1].stairGoingDown.y = -1;
-      database[1].stairGoingDown.z = -1;
    }
    else if (world[storage[chooseRoomForStairs].startingX + stairX - 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ] == 0)
    {
@@ -1220,10 +1173,6 @@ void generateDungeonLevel(worldLevels database[2])
       database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX - 1;
       database[1].stairGoingUp.y = WORLD_Y + 1;
       database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ;
-
-      database[1].stairGoingDown.x = -1;
-      database[1].stairGoingDown.y = -1;
-      database[1].stairGoingDown.z = -1;
    }
    else if (world[storage[chooseRoomForStairs].startingX + stairX][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ - 1] == 0)
    {
@@ -1232,10 +1181,6 @@ void generateDungeonLevel(worldLevels database[2])
       database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX;
       database[1].stairGoingUp.y = WORLD_Y + 1;
       database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ - 1;
-
-      database[1].stairGoingDown.x = -1;
-      database[1].stairGoingDown.y = -1;
-      database[1].stairGoingDown.z = -1;
    }
    else if (world[storage[chooseRoomForStairs].startingX + stairX - 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ - 1] == 0)
    {
@@ -1244,10 +1189,6 @@ void generateDungeonLevel(worldLevels database[2])
       database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX - 1;
       database[1].stairGoingUp.y = WORLD_Y + 1;
       database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ - 1;
-
-      database[1].stairGoingDown.x = -1;
-      database[1].stairGoingDown.y = -1;
-      database[1].stairGoingDown.z = -1;
    }
    else if (world[storage[chooseRoomForStairs].startingX + stairX + 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ + 1] == 0)
    {
@@ -1256,10 +1197,6 @@ void generateDungeonLevel(worldLevels database[2])
       database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX + 1;
       database[1].stairGoingUp.y = WORLD_Y + 1;
       database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ + 1;
-
-      database[1].stairGoingDown.x = -1;
-      database[1].stairGoingDown.y = -1;
-      database[1].stairGoingDown.z = -1;
    }
    else if (world[storage[chooseRoomForStairs].startingX + stairX - 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ + 1] == 0)
    {
@@ -1268,10 +1205,6 @@ void generateDungeonLevel(worldLevels database[2])
       database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX - 1;
       database[1].stairGoingUp.y = WORLD_Y + 1;
       database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ + 1;
-
-      database[1].stairGoingDown.x = -1;
-      database[1].stairGoingDown.y = -1;
-      database[1].stairGoingDown.z = -1;
    }
    else if (world[storage[chooseRoomForStairs].startingX + stairX + 1][WORLD_Y + 1][storage[chooseRoomForStairs].startingZ + stairZ - 1] == 0)
    {
@@ -1280,10 +1213,6 @@ void generateDungeonLevel(worldLevels database[2])
       database[1].stairGoingUp.x = storage[chooseRoomForStairs].startingX + stairX + 1;
       database[1].stairGoingUp.y = WORLD_Y + 1;
       database[1].stairGoingUp.z = storage[chooseRoomForStairs].startingZ + stairZ - 1;
-
-      database[1].stairGoingDown.x = -1;
-      database[1].stairGoingDown.y = -1;
-      database[1].stairGoingDown.z = -1;
    }
 
    //THIS IS A TEST BLOCK FOR A2 PLEASE DONT MIND IT :((
@@ -4983,7 +4912,7 @@ void setPlayerSpawnLocation()
    setOldViewPosition(spawnX, spawnY, spawnZ);
 }
 
-void saveCurrentWorld(int saveWorldToThis[100][50][100])
+void saveCurrentWorld(int saveWorldToThis[100][50][100], bool *containsWorld)
 {
    for (int i = 0; i < WORLDX; i++)
    {
@@ -4995,6 +4924,8 @@ void saveCurrentWorld(int saveWorldToThis[100][50][100])
          }
       }
    }
+
+   *containsWorld = true;
 }
 
 void regenerateWorld(int regenerateThisWorld[100][50][100])
@@ -5070,9 +5001,11 @@ void generateOutsideLevel(worldLevels database[2])
          database[0].stairGoingDown.y = y + 1;
          database[0].stairGoingDown.z = stairZ;
 
-         database[0].stairGoingUp.x = -1;
-         database[0].stairGoingUp.y = -1;
-         database[0].stairGoingUp.z = -1;
+         //database[0].containsWorld = true;
+
+         //database[0].stairGoingUp.x = -1;
+         //database[0].stairGoingUp.y = -1;
+         //database[0].stairGoingUp.z = -1;
          break;
       }
    }
@@ -5080,7 +5013,7 @@ void generateOutsideLevel(worldLevels database[2])
 
 void goDownStairs(worldLevels database[2], float playerX, float playerY, float playerZ)
 {
-   int lengthOfDatabase = 2;
+   //int lengthOfDatabase = 2;
 
    float newX;
    float newY;
@@ -5093,7 +5026,7 @@ void goDownStairs(worldLevels database[2], float playerX, float playerY, float p
    //printf("TEST TEST TEST\n");
 
    //Size is not set/determined and needs to be changed, haven't made a function to find the length of struct array yet
-   for (int i = 0; i < lengthOfDatabase - 1; i++)
+   for (int i = 0; i < sizeOfDatabase - 1; i++)
    {
       //Check all values of player's x,y (+/-1), and z with the stair location in database
 
@@ -5255,7 +5188,7 @@ void goDownStairs(worldLevels database[2], float playerX, float playerY, float p
 
 void goUpStairs(worldLevels database[2], float playerX, float playerY, float playerZ)
 {
-   int lengthOfDatabase = 2;
+   //int lengthOfDatabase = 2;
 
    float newX;
    float newY;
@@ -5268,7 +5201,7 @@ void goUpStairs(worldLevels database[2], float playerX, float playerY, float pla
    //printf("TEST TEST TEST\n");
 
    //Size is not set/determined and needs to be changed, haven't made a function to find the length of struct array yet
-   for (int i = lengthOfDatabase - 1; i > 0; i--)
+   for (int i = sizeOfDatabase - 1; i > 0; i--)
    {
       //Check all values of player's x,y (+/-1), and z with the stair location in database
 
@@ -5463,5 +5396,190 @@ void spawnBesideBlock(worldLevels database[2])
    else if (world[database[0].stairGoingDown.x + 1][database[0].stairGoingDown.y][database[0].stairGoingDown.z - 1] == 0)
    {
       setViewPosition((float)(-1 * database[0].stairGoingDown.x + 1), ((float)(-1 * database[0].stairGoingDown.y - 2)), ((float)(-1 * database[0].stairGoingDown.z - 1)));
+   }
+}
+
+void initWorldDatabase(worldLevels database[2])
+{
+   for (int i = 0; i < sizeOfDatabase; i++)
+   {
+      database[i].stairGoingDown.x = -1;
+      database[i].stairGoingDown.y = -1;
+      database[i].stairGoingDown.z = -1;
+
+      database[i].stairGoingUp.x = -1;
+      database[i].stairGoingUp.y = -1;
+      database[i].stairGoingUp.z = -1;
+
+      database[i].containsWorld = false;
+   }
+}
+
+void generateClouds()
+{
+   srand(time(NULL));
+   //rng formula
+   //int rng = (rand() % (max - min + 1)) + min;
+
+   int increment = 10;
+   int cloud_size = 33;
+   //printf("CLOUDS RUNNING?\n");
+
+   //This moves the clouds from one side of the map to the other side of the map
+   cloud_speed += 0.01;
+
+   //Loop that animates the clouds to be changing
+   for (int i = 0; i < 10000; i++)
+   {
+      int convertedSpeed = (int)round(cloud_speed);
+      int spotOfCloud = (rand() % ((cloud_size - 5) - 5 + 1)) + 5;
+      int shaftSize = 4; // ( ͡° ͜ʖ ͡°)
+      int rng = rand() % 4;
+
+      //This is just a personal not on infomation be inputted into the cloud locations
+      /*
+      int cloud_Y = 90 + rng;
+
+      int leftNut_X = (convertedSpeed + spotOfCloud - 1) % 100;
+      int rightNut_X = (convertedSpeed + spotOfCloud + 1) % 100;
+      int shaft_X = (convertedSpeed + spotOfCloud) % 100;
+
+      int delete_leftNut_X = ((convertedSpeed - 1) + spotOfCloud - 1) % 100;
+      int delete_rightNut_X = ((convertedSpeed - 1) + spotOfCloud + 1) % 100;
+      int delete_shaft_X = ((convertedSpeed - 1) + spotOfCloud) % 100;
+
+      int cloud_Z = (increment + 3) + shaftSize;
+      int cloud_Z1 = (increment + 0) + shaftSize;
+      int cloud_Z2 = (increment + 1) + shaftSize;
+      int cloud_Z3 = (increment + 2) + shaftSize;
+      */
+      
+      //Create
+      //Balls
+      world[(convertedSpeed + spotOfCloud - 1) % 100][90 + rng][(increment + 3) + shaftSize] = 10;
+      world[(convertedSpeed + spotOfCloud + 1) % 100][90 + rng][(increment + 3) + shaftSize] = 10;
+      //Shaft
+      world[(convertedSpeed + spotOfCloud) % 100][90 + rng][(increment + 0) + shaftSize] = 10;
+      world[(convertedSpeed + spotOfCloud) % 100][90 + rng][(increment + 1) + shaftSize] = 10;
+      world[(convertedSpeed + spotOfCloud) % 100][90 + rng][(increment + 2) + shaftSize] = 10;
+
+      //Delete
+      //Balls
+      world[((convertedSpeed - 1) + spotOfCloud - 1) % 100][90 + rng][(increment + 3) + shaftSize] = 0;
+      world[((convertedSpeed - 1) + spotOfCloud + 1) % 100][90 + rng][(increment + 3) + shaftSize] = 0;
+      //Shaft
+      world[((convertedSpeed - 1) + spotOfCloud) % 100][90 + rng][(increment + 0) + shaftSize] = 0;
+      world[((convertedSpeed - 1) + spotOfCloud) % 100][90 + rng][(increment + 1) + shaftSize] = 0;
+      world[((convertedSpeed - 1) + spotOfCloud) % 100][90 + rng][(increment + 2) + shaftSize] = 0;
+   }
+
+   //THIS IS THE OG SHAPE
+   for (int i = 0; i < 10000; i++)
+   {
+      int convertedSpeed = (int)round(cloud_speed);
+      int rng = rand() % 4;
+      int shaftSize = 4; // ( ͡° ͜ʖ ͡°)
+
+      //Create
+      //Balls
+      world[(convertedSpeed + 21) % 100][90 + rng][33 + shaftSize] = 10;
+      world[(convertedSpeed + 23) % 100][90 + rng][33 + shaftSize] = 10;
+      //Shaft
+      world[(convertedSpeed + 22) % 100][90 + rng][30 + shaftSize] = 10;
+      world[(convertedSpeed + 22) % 100][90 + rng][31 + shaftSize] = 10;
+      world[(convertedSpeed + 22) % 100][90 + rng][32 + shaftSize] = 10;
+
+      //Delete
+      //Balls
+      world[((convertedSpeed - 1) + 21) % 100][90 + rng][33 + shaftSize] = 0;
+      world[((convertedSpeed - 1) + 23) % 100][90 + rng][33 + shaftSize] = 0;
+      //Shaft
+      world[((convertedSpeed - 1) + 22) % 100][90 + rng][30 + shaftSize] = 0;
+      world[((convertedSpeed - 1) + 22) % 100][90 + rng][31 + shaftSize] = 0;
+      world[((convertedSpeed - 1) + 22) % 100][90 + rng][32 + shaftSize] = 0;
+   }
+
+   for (int i = 0; i < 10000; i++)
+   {
+      int convertedSpeed = (int)round(cloud_speed);
+      int spotOfCloud = (rand() % ((cloud_size - 5) - 5 + 1)) + 5;
+      int shaftSize = 4; // ( ͡° ͜ʖ ͡°)
+      int rng = rand() % 3;
+
+      //Create
+      //Balls
+      world[(convertedSpeed + spotOfCloud - 1 + ((5 * increment) + 3)) % 100][90 + rng][((5 * increment) + 3) + shaftSize] = 10;
+      world[(convertedSpeed + spotOfCloud + 1 + ((5 * increment) + 3)) % 100][90 + rng][((5 * increment) + 3) + shaftSize] = 10;
+      //Shaft
+      world[(convertedSpeed + spotOfCloud + ((5 * increment) + 3)) % 100][90 + rng][((5 * increment) + 0) + shaftSize] = 10;
+      world[(convertedSpeed + spotOfCloud + ((5 * increment) + 3)) % 100][90 + rng][((5 * increment) + 1) + shaftSize] = 10;
+      world[(convertedSpeed + spotOfCloud + ((5 * increment) + 3)) % 100][90 + rng][((5 * increment) + 2) + shaftSize] = 10;
+
+      //Delete
+      //Balls
+      world[((convertedSpeed - 1) + spotOfCloud - 1 + ((5 * increment) + 3)) % 100][90 + rng][((5 * increment) + 3) + shaftSize] = 0;
+      world[((convertedSpeed - 1) + spotOfCloud + 1 + ((5 * increment) + 3)) % 100][90 + rng][((5 * increment) + 3) + shaftSize] = 0;
+      //Shaft
+      world[((convertedSpeed - 1) + spotOfCloud + ((5 * increment) + 3)) % 100][90 + rng][((5 * increment) + 0) + shaftSize] = 0;
+      world[((convertedSpeed - 1) + spotOfCloud + ((5 * increment) + 3)) % 100][90 + rng][((5 * increment) + 1) + shaftSize] = 0;
+      world[((convertedSpeed - 1) + spotOfCloud + ((5 * increment) + 3)) % 100][90 + rng][((5 * increment) + 2) + shaftSize] = 0;
+   }
+
+   for (int i = 0; i < 10000; i++)
+   {
+      int convertedSpeed = (int)round(cloud_speed);
+      int spotOfCloud = (rand() % ((cloud_size - 5) - 5 + 1)) + 5;
+      int shaftSize = 4; // ( ͡° ͜ʖ ͡°)
+      int rng = rand() % 3;
+
+      //Create
+      //Balls
+      world[(convertedSpeed + spotOfCloud - 1) % 100][90 + rng][((7 * increment) + 3) + shaftSize] = 10;
+      world[(convertedSpeed + spotOfCloud + 1) % 100][90 + rng][((7 * increment) + 3) + shaftSize] = 10;
+      //Shaft
+      world[(convertedSpeed + spotOfCloud) % 100][90 + rng][((7 * increment) + 0) + shaftSize] = 10;
+      world[(convertedSpeed + spotOfCloud) % 100][90 + rng][((7 * increment) + 1) + shaftSize] = 10;
+      world[(convertedSpeed + spotOfCloud) % 100][90 + rng][((7 * increment) + 2) + shaftSize] = 10;
+
+      //Delete
+      //Balls
+      world[((convertedSpeed - 1) + spotOfCloud - 1) % 100][90 + rng][((7 * increment) + 3) + shaftSize] = 0;
+      world[((convertedSpeed - 1) + spotOfCloud + 1) % 100][90 + rng][((7 * increment) + 3) + shaftSize] = 0;
+      //Shaft
+      world[((convertedSpeed - 1) + spotOfCloud) % 100][90 + rng][((7 * increment) + 0) + shaftSize] = 0;
+      world[((convertedSpeed - 1) + spotOfCloud) % 100][90 + rng][((7 * increment) + 1) + shaftSize] = 0;
+      world[((convertedSpeed - 1) + spotOfCloud) % 100][90 + rng][((7 * increment) + 2) + shaftSize] = 0;
+   }
+
+   for (int i = 0; i < 10000; i++)
+   {
+      int convertedSpeed = (int)round(cloud_speed);
+      int spotOfCloud = (rand() % ((cloud_size - 5) - 5 + 1)) + 5;
+      int shaftSize = 4; // ( ͡° ͜ʖ ͡°)
+      int rng = rand() % 3;
+
+      //Create
+      //Balls
+      world[(convertedSpeed + spotOfCloud - 1 + ((2 * increment) + 3)) % 100][90 + rng][((9 * increment) + 3) + shaftSize] = 10;
+      world[(convertedSpeed + spotOfCloud + 1 + ((2 * increment) + 3)) % 100][90 + rng][((9 * increment) + 3) + shaftSize] = 10;
+      //Shaft
+      world[(convertedSpeed + spotOfCloud + ((2 * increment) + 3)) % 100][90 + rng][((9 * increment) + 0) + shaftSize] = 10;
+      world[(convertedSpeed + spotOfCloud + ((2 * increment) + 3)) % 100][90 + rng][((9 * increment) + 1) + shaftSize] = 10;
+      world[(convertedSpeed + spotOfCloud + ((2 * increment) + 3)) % 100][90 + rng][((9 * increment) + 2) + shaftSize] = 10;
+
+      //Delete
+      //Balls
+      world[((convertedSpeed - 1) + spotOfCloud - 1 + ((2 * increment) + 3)) % 100][90 + rng][((9 * increment) + 3) + shaftSize] = 0;
+      world[((convertedSpeed - 1) + spotOfCloud + 1 + ((2 * increment) + 3)) % 100][90 + rng][((9 * increment) + 3) + shaftSize] = 0;
+      //Shaft
+      world[((convertedSpeed - 1) + spotOfCloud + ((2 * increment) + 3)) % 100][90 + rng][((9 * increment) + 0) + shaftSize] = 0;
+      world[((convertedSpeed - 1) + spotOfCloud + ((2 * increment) + 3)) % 100][90 + rng][((9 * increment) + 1) + shaftSize] = 0;
+      world[((convertedSpeed - 1) + spotOfCloud + ((2 * increment) + 3)) % 100][90 + rng][((9 * increment) + 2) + shaftSize] = 0;
+   }
+
+   //Reset when it reaches the end of the map to the beginning
+   if (cloud_speed >= 100)
+   {
+      cloud_speed = 0;
    }
 }
