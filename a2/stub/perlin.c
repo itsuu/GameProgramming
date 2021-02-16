@@ -1,3 +1,9 @@
+/*
+ * perlin noise source: https://gist.github.com/nowl/828013
+ * All credits to the perlin noise source goes to the creator in the above link. He has made it open source
+ *  by others in projects.
+ */
+
 #include "perlin.h"
 
 int noise2(int x, int y)

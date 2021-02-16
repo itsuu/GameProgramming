@@ -4912,6 +4912,7 @@ void setPlayerSpawnLocation()
    setOldViewPosition(spawnX, spawnY, spawnZ);
 }
 
+//Save the current world array inside the world array inside the database
 void saveCurrentWorld(int saveWorldToThis[100][50][100], bool *containsWorld)
 {
    for (int i = 0; i < WORLDX; i++)
@@ -4928,6 +4929,7 @@ void saveCurrentWorld(int saveWorldToThis[100][50][100], bool *containsWorld)
    *containsWorld = true;
 }
 
+//Loads the world from the store world array in the database
 void regenerateWorld(int regenerateThisWorld[100][50][100])
 {
    for (int i = 0; i < WORLDX; i++)
@@ -4942,6 +4944,7 @@ void regenerateWorld(int regenerateThisWorld[100][50][100])
    }
 }
 
+//Creates the outside overworld
 void generateOutsideLevel(worldLevels database[2])
 {
    //i = X
@@ -5000,17 +5003,18 @@ void generateOutsideLevel(worldLevels database[2])
          database[0].stairGoingDown.x = stairX;
          database[0].stairGoingDown.y = y + 1;
          database[0].stairGoingDown.z = stairZ;
-
-         //database[0].containsWorld = true;
-
-         //database[0].stairGoingUp.x = -1;
-         //database[0].stairGoingUp.y = -1;
-         //database[0].stairGoingUp.z = -1;
          break;
       }
    }
 }
 
+//Goes through world array and spawns player near the stairs location stored
+/*
+ * I know it is SUPER dumb but each check in the if statement is to determine the blocks around the stairs 
+ * checking if they are clear or not. I would have loved to make it more modular with functions but the test
+ * is literally +/-1 in every possible direction around the stairs cube, which I cant really find a modular way
+ * to check for it 
+ */
 void goDownStairs(worldLevels database[2], float playerX, float playerY, float playerZ)
 {
    //int lengthOfDatabase = 2;
@@ -5186,6 +5190,7 @@ void goDownStairs(worldLevels database[2], float playerX, float playerY, float p
    }
 }
 
+//Same as go down stairs but functions backwards going from the max array value to the least
 void goUpStairs(worldLevels database[2], float playerX, float playerY, float playerZ)
 {
    //int lengthOfDatabase = 2;
@@ -5399,6 +5404,7 @@ void spawnBesideBlock(worldLevels database[2])
    }
 }
 
+//Sets all the values inside the world database to -1
 void initWorldDatabase(worldLevels database[2])
 {
    for (int i = 0; i < sizeOfDatabase; i++)
@@ -5415,6 +5421,7 @@ void initWorldDatabase(worldLevels database[2])
    }
 }
 
+//Generate and animate the clouds
 void generateClouds()
 {
    srand(time(NULL));
@@ -5453,7 +5460,7 @@ void generateClouds()
       int cloud_Z2 = (increment + 1) + shaftSize;
       int cloud_Z3 = (increment + 2) + shaftSize;
       */
-      
+
       //Create
       //Balls
       world[(convertedSpeed + spotOfCloud - 1) % 100][90 + rng][(increment + 3) + shaftSize] = 10;
