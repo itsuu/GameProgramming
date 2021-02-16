@@ -187,12 +187,16 @@ typedef struct worldLevels
 
 } worldLevels;
 
-//WORLD DATABASE
-//SHOULD BE DYNAMIC BUT I DONT HAVE THE TIME
+
 int sizeOfDatabase = 2;
 float cloud_speed = 0;
 int cloud_check = 1;
 
+//WORLD DATABASE
+/* This functions as 2 right not as that is what is required for A2, however this will work with
+ * world level more than 2. This is shown in the initWorldDatabase, goUpStairs, goDownStairs, functions as they 
+ * are made to work modularly with more than 2 function levels.
+ */
 worldLevels database[2];
 
 void initWorld();
