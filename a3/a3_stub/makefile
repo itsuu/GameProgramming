@@ -52,5 +52,5 @@ LIBS = -lGL -lGLU -lglut -lm -D__LINUX__
 # a1: a1.c graphics.c visible.c mesh.c graphics.h mesh.h fast_obj.h
 # 	  gcc a1.c graphics.c visible.c mesh.c  -o a1 $(LIBS) 
 
-a1: a1.c graphics.c visible.c mesh.c functions.c perlin.c graphics.h mesh.h fast_obj.h
-	gcc a1.c graphics.c visible.c mesh.c functions.c perlin.c -o a1 $(LIBS) 
+a1: a1.c graphics.c visible.c mesh.c functions.c perlin.c PointInFrustum.c graphics.h mesh.h fast_obj.h
+	gcc a1.c graphics.c visible.c mesh.c functions.c perlin.c PointInFrustum.c -o a1 $(LIBS) 

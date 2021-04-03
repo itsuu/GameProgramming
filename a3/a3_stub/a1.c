@@ -16,6 +16,7 @@
 #include "graphics.h"
 #include "functions.h"
 #include "perlin.h"
+#include "PointInFrustum.h"
 
 extern GLubyte world[WORLDX][WORLDY][WORLDZ];
 
@@ -148,6 +149,14 @@ typedef struct stairCoords
    //int travelToZ;
 } stairCoords;
 
+typedef struct Mobs
+{
+   int mobType;
+   float x;
+   float y;
+   float z;
+} Mobs;
+
 //Global structure to store all the information about level
 typedef struct Room
 {
@@ -199,12 +208,22 @@ typedef struct worldLevels
    bool containsWorld;
    //savedViewPoint playersLastPointInWorld;
    //Room level[9];
-
 } worldLevels;
 
+//constants
 int sizeOfDatabase = 2;
 float cloud_speed = 0;
 int cloud_check = 1;
+int currentRoomID = -1;
+int previousRoomID = -1;
+int activeRooms[9];
+int activeHallways[100][1][100];
+int WORLD_Y = 24;
+float mobMovementSpeed = 0.02;
+float mobDirection = -1.0;
+//bool wallCheck = false;
+
+Mobs mobStorage[9];
 
 //WORLD DATABASE
 /* This functions as 2 right not as that is what is required for A2, however this will work with
@@ -248,6 +267,12 @@ void regenerateWorld(int regenerateThisWorld[100][50][100]);
 void spawnBesideBlock(worldLevels database[2]);
 
 void generateClouds();
+
+//A3 Helper functions
+int findCurrentRoomLocation(int playerX, int playerZ);
+void generateMob(Room storage[9], Mobs mobStorage[9]);
+void outputMeshInfo(Mobs mobStorage[9], int roomID, bool mobVisible);
+bool wallInFront(int x, int y, int z);
 
 /*** collisionResponse() ***/
 /* -performs collision detection and response */
@@ -312,6 +337,9 @@ void collisionResponse()
                   generateDungeonLevel(database);
                   //Saved Dungeon
                   saveCurrentWorld(database[1].savedWorld, &database[1].containsWorld);
+
+                  //Generate mobs the first time I enter the dungeon
+                  generateMob(storage, mobStorage);
                }
                else
                {
@@ -324,6 +352,8 @@ void collisionResponse()
                //Go downstairs
                goDownStairs(database, (-1 * newX), (-1 * newY), (-1 * newZ));
                cloud_check = 0;
+
+               //show mobs everytime I re-enter dungeon
             }
             else if (world[(int)newX][(int)newY][(int)newZ] == 5)
             {
@@ -497,9 +527,11 @@ void draw2D()
 
    if (testWorld)
    {
+      //printf("INSIDE TEST WORLD\n");
       /* draw some sample 2d shapes */
       if (displayMap == 1)
       {
+
          GLfloat green[] = {0.0, 0.5, 0.0, 0.5};
          set2Dcolour(green);
          draw2Dline(0, 0, 500, 500, 15);
@@ -512,9 +544,227 @@ void draw2D()
    }
    else
    {
-
       /* your code goes here */
+
+      int inverseMapValue = 768;
+      int scale = 3;
+      int screenOffset = 700;
+      float widthOfScreen = (screenWidth / 1024.0);
+      float heightOfScreen = (screenHeight / 768.0);
+      float playerX;
+      float playerY;
+      float playerZ;
+      int intX;
+      int intZ;
+      int upstairLocation;
+      GLfloat yellow[] = {1.0, 1.0, 0.0, 1.0};
+      GLfloat gray[] = {0.3, 0.3, 0.3, 1.0};
+      GLfloat red[] = {1.0, 0.0, 0.0, 1.0};
+      GLfloat white[] = {1.0, 1.0, 1.0, 1.0};
+      GLfloat green[] = {0.0, 1.0, 0.0, 1.0};
+
+      int floorColour = 69;
+      int floorShade = 14;
+
+      getViewPosition(&playerX, &playerY, &playerZ);
+      playerX = inverseValue(playerX);
+      playerY = inverseValue(playerY);
+      playerZ = inverseValue(playerZ);
+      intX = (int)playerX;
+      intZ = (int)playerZ;
+
+      //add to the x, moves right
+      //subtract to the x, moves left
+
+      //add to the z, moves up
+      //subtract to the x, moves down
+
+      //Display the full map
+      //draws the overworld map
+      if (displayMap == 1 && cloud_check == 1)
+      {
+         //draws the player
+         set2Dcolour(yellow);
+         draw2Dbox((((playerX * scale) - 2.25) + screenOffset) * widthOfScreen, (inverseMapValue - (playerZ * scale) - 2.25) * heightOfScreen, (((playerX * scale) + 2.25) + screenOffset) * widthOfScreen, (inverseMapValue - (playerZ * scale) + 2.25) * heightOfScreen);
+
+         //draws stairs going down
+         set2Dcolour(gray);
+         draw2Dbox((((database[0].stairGoingDown.x * scale) - 2) + screenOffset) * widthOfScreen, (inverseMapValue - (database[0].stairGoingDown.z * scale) - 2) * heightOfScreen, (((database[0].stairGoingDown.x * scale) + 2) + screenOffset) * widthOfScreen, (inverseMapValue - (database[0].stairGoingDown.z * scale) + 2) * heightOfScreen);
+      }
+      else if (displayMap == 1 && cloud_check == 0)
+      {
+         //Draws the full visble map
+         //draws the player
+         set2Dcolour(yellow);
+         draw2Dbox((((playerX * scale) - 2.25) + screenOffset) * widthOfScreen, (inverseMapValue - (playerZ * scale) - 2.25) * heightOfScreen, (((playerX * scale) + 2.25) + screenOffset) * widthOfScreen, (inverseMapValue - (playerZ * scale) + 2.25) * heightOfScreen);
+
+         //draws the stairs
+         set2Dcolour(white);
+         draw2Dbox((((database[1].stairGoingUp.x * scale) - 2) + screenOffset) * widthOfScreen, (inverseMapValue - (database[1].stairGoingUp.z * scale) - 2) * heightOfScreen, (((database[1].stairGoingUp.x * scale) + 2) + screenOffset) * widthOfScreen, (inverseMapValue - (database[1].stairGoingUp.z * scale) + 2) * heightOfScreen);
+
+         //draw mob on map
+         set2Dcolour(green);
+         for (int i = 0; i < 9; i++)
+         {
+            draw2Dbox((((mobStorage[i].x * scale) - 2.5) + screenOffset) * widthOfScreen, (inverseMapValue - (mobStorage[i].z * scale) - 2.5) * heightOfScreen, (((mobStorage[i].x * scale) + 2.5) + screenOffset) * widthOfScreen, (inverseMapValue - (mobStorage[i].z * scale) + 2.5) * heightOfScreen);
+         }
+
+         //draws the red cubes
+         set2Dcolour(red);
+         for (int i = 0; i < 9; i++)
+         {
+            draw2Dbox((((storage[i].randBlocks[0].x * scale) - 2) + screenOffset) * widthOfScreen, (inverseMapValue - (storage[i].randBlocks[0].z * scale) - 2) * heightOfScreen, ((((storage[i].randBlocks[0].x * scale) + 2) + screenOffset)) * widthOfScreen, (inverseMapValue - (storage[i].randBlocks[0].z * scale) + 2) * heightOfScreen);
+            draw2Dbox((((storage[i].randBlocks[1].x * scale) - 2) + screenOffset) * widthOfScreen, (inverseMapValue - (storage[i].randBlocks[1].z * scale) - 2) * heightOfScreen, ((((storage[i].randBlocks[1].x * scale) + 2) + screenOffset)) * widthOfScreen, (inverseMapValue - (storage[i].randBlocks[1].z * scale) + 2) * heightOfScreen);
+         }
+
+         //draws the dungeon rooms
+         for (int i = 0; i < 9; i++)
+         {
+            //Draws the 9 rooms without fog
+            set2Dcolour(gray);
+            draw2Dbox((((storage[i].startingX * scale) - 2.5) + screenOffset) * widthOfScreen, (inverseMapValue - ((storage[i].startingZ + storage[i].zLength) * scale) - 2.5) * heightOfScreen, (((((storage[i].startingX + storage[i].xLength) * scale) + 2.5) + screenOffset)) * widthOfScreen, (inverseMapValue - (storage[i].startingZ * scale) + 2.5) * heightOfScreen);
+         }
+
+         //draws the hallways rooms
+         set2Dcolour(gray);
+         for (int i = 0; i < WORLDX; i++)
+         {
+            for (int j = 0; j < WORLDZ; j++)
+            {
+               if (world[i][WORLD_Y][j] == floorColour || world[i][WORLD_Y][j] == floorShade)
+               {
+                  draw2Dbox((((i * scale) - 2.5) + screenOffset) * widthOfScreen, (inverseMapValue - (j * scale) - 2.5) * heightOfScreen, (((i * scale) + 2.5) + screenOffset) * widthOfScreen, (inverseMapValue - (j * scale) + 2.5) * heightOfScreen);
+               }
+            }
+         }
+      }
+      else if (displayMap == 2 && cloud_check == 0)
+      {
+         //Draws the fog of war map
+         currentRoomID = findCurrentRoomLocation(intX, intZ);
+         //printf("PLAYER IS IN ROOM: %d\n", currentRoomID);
+
+         //draws the player
+         set2Dcolour(yellow);
+         draw2Dbox((((playerX * scale) - 2.25) + screenOffset) * widthOfScreen, (inverseMapValue - (playerZ * scale) - 2.25) * heightOfScreen, (((playerX * scale) + 2.25) + screenOffset) * widthOfScreen, (inverseMapValue - (playerZ * scale) + 2.25) * heightOfScreen);
+
+         //might need to make this appear only when in the room of the stairs
+         //location of the stairs / related to the room id
+         upstairLocation = findCurrentRoomLocation(database[1].stairGoingUp.x, database[1].stairGoingUp.z);
+
+         //saves the value of the mapped rooms to the global array
+         if (currentRoomID != -1)
+         {
+            activeRooms[currentRoomID] = 1;
+         }
+
+         for (int i = 0; i < 9; i++)
+         {
+            //printf("ACTIVE ROOM values: %d, ACTIVE ROOMS: %d,  ", activeRooms[i], i);
+
+            if (activeRooms[i] == 1)
+            {
+               if (i == upstairLocation)
+               {
+                  set2Dcolour(white);
+                  draw2Dbox((((database[1].stairGoingUp.x * scale) - 2) + screenOffset) * widthOfScreen, (inverseMapValue - (database[1].stairGoingUp.z * scale) - 2) * heightOfScreen, (((database[1].stairGoingUp.x * scale) + 2) + screenOffset) * widthOfScreen, (inverseMapValue - (database[1].stairGoingUp.z * scale) + 2) * heightOfScreen);
+               }
+
+               //draw mob on map
+               set2Dcolour(green);
+               draw2Dbox((((mobStorage[i].x * scale) - 2.5) + screenOffset) * widthOfScreen, (inverseMapValue - (mobStorage[i].z * scale) - 2.5) * heightOfScreen, (((mobStorage[i].x * scale) + 2.5) + screenOffset) * widthOfScreen, (inverseMapValue - (mobStorage[i].z * scale) + 2.5) * heightOfScreen);
+
+               //draws the red cubes
+               set2Dcolour(red);
+               draw2Dbox((((storage[i].randBlocks[0].x * scale) - 2) + screenOffset) * widthOfScreen, (inverseMapValue - (storage[i].randBlocks[0].z * scale) - 2) * heightOfScreen, ((((storage[i].randBlocks[0].x * scale) + 2) + screenOffset)) * widthOfScreen, (inverseMapValue - (storage[i].randBlocks[0].z * scale) + 2) * heightOfScreen);
+               draw2Dbox((((storage[i].randBlocks[1].x * scale) - 2) + screenOffset) * widthOfScreen, (inverseMapValue - (storage[i].randBlocks[1].z * scale) - 2) * heightOfScreen, ((((storage[i].randBlocks[1].x * scale) + 2) + screenOffset)) * widthOfScreen, (inverseMapValue - (storage[i].randBlocks[1].z * scale) + 2) * heightOfScreen);
+
+               //draws the room of that the player is currently in ONLY
+               set2Dcolour(gray);
+               draw2Dbox((((storage[i].startingX * scale) - 2.5) + screenOffset) * widthOfScreen, (inverseMapValue - ((storage[i].startingZ + storage[i].zLength) * scale) - 2.5) * heightOfScreen, (((((storage[i].startingX + storage[i].xLength) * scale) + 2.5) + screenOffset)) * widthOfScreen, (inverseMapValue - (storage[i].startingZ * scale) + 2.5) * heightOfScreen);
+            }
+            //printf("\n");
+         }
+
+         //check hallways on the map
+
+         //check the player block
+         if (world[intX][WORLD_Y][intZ] == floorColour || world[intX][WORLD_Y][intZ] == floorShade)
+         {
+            activeHallways[intX][0][intZ] = 1;
+         }
+
+         //check around the player 1 blocks away
+         if (world[intX + 1][WORLD_Y][intZ] == floorColour || world[intX + 1][WORLD_Y][intZ] == floorShade)
+         {
+            activeHallways[intX + 1][0][intZ] = 1;
+         }
+
+         if (world[intX - 1][WORLD_Y][intZ] == floorColour || world[intX - 1][WORLD_Y][intZ] == floorShade)
+         {
+            activeHallways[intX - 1][0][intZ] = 1;
+         }
+
+         if (world[intX][WORLD_Y][intZ + 1] == floorColour || world[intX][WORLD_Y][intZ + 1] == floorShade)
+         {
+            activeHallways[intX][0][intZ + 1] = 1;
+         }
+
+         if (world[intX][WORLD_Y][intZ - 1] == floorColour || world[intX][WORLD_Y][intZ - 1] == floorShade)
+         {
+            activeHallways[intX][0][intZ - 1] = 1;
+         }
+
+         //check around the player 2 blocks away
+         if (world[intX + 2][WORLD_Y][intZ] == floorColour || world[intX + 2][WORLD_Y][intZ] == floorShade)
+         {
+            activeHallways[intX + 2][0][intZ] = 1;
+         }
+
+         if (world[intX - 2][WORLD_Y][intZ] == floorColour || world[intX - 2][WORLD_Y][intZ] == floorShade)
+         {
+            activeHallways[intX - 2][0][intZ] = 1;
+         }
+
+         if (world[intX][WORLD_Y][intZ + 2] == floorColour || world[intX][WORLD_Y][intZ + 2] == floorShade)
+         {
+            activeHallways[intX][0][intZ + 2] = 1;
+         }
+
+         if (world[intX][WORLD_Y][intZ - 2] == floorColour || world[intX][WORLD_Y][intZ - 2] == floorShade)
+         {
+            activeHallways[intX][0][intZ - 2] = 1;
+         }
+
+         //draw the hallways
+         set2Dcolour(gray);
+         for (int i = 0; i < WORLDX; i++)
+         {
+            for (int j = 0; j < WORLDZ; j++)
+            {
+               if (activeHallways[i][0][j] == 1)
+               {
+                  draw2Dbox((((i * scale) - 3) + screenOffset) * widthOfScreen, (inverseMapValue - (j * scale) - 3) * heightOfScreen, (((i * scale) + 3) + screenOffset) * widthOfScreen, (inverseMapValue - (j * scale) + 3) * heightOfScreen);
+               }
+            }
+         }
+      }
    }
+}
+
+int findCurrentRoomLocation(int playerX, int playerZ)
+{
+   for (int i = 0; i < 9; i++)
+   {
+      //Checks the user location is within the range of the room anchors
+      if (((playerX > storage[i].startingX) && (playerX < (storage[i].startingX + storage[i].xLength))) && ((playerZ > storage[i].startingZ) && (playerZ < (storage[i].startingZ + storage[i].zLength))))
+      {
+         //printf("PLAYER IS IN ROOM: %d\n", i);
+         return i;
+      }
+   }
+
+   return -1;
 }
 
 //Helper function used in collision response to tests the area around the view point for extra acuracy
@@ -749,6 +999,9 @@ void update()
                generateDungeonLevel(database);
                //Saved Dungeon
                saveCurrentWorld(database[1].savedWorld, &database[1].containsWorld);
+
+               //generate mobs the first time i enter dungeon
+               generateMob(storage, mobStorage);
             }
             else
             {
@@ -761,6 +1014,109 @@ void update()
             //Go downstairs
             goDownStairs(database, (-1 * newX), (-1 * newY), (-1 * newZ));
             cloud_check = 0;
+
+            //show mobs everytime I re-enter dungeon
+         }
+      }
+
+      //mesh visibility
+      if (cloud_check == 0)
+      {
+         float newX2;
+         float newY2;
+         float newZ2;
+         int intX;
+         int intZ;
+         int inRoomID = -1;
+         float distanceAway = 10;
+         int distanceX;
+         int distanceZ;
+         bool mobVisible;
+
+         getViewPosition(&newX2, &newY2, &newZ2);
+         newX2 = inverseValue(newX2);
+         newY2 = inverseValue(newY2);
+         newZ2 = inverseValue(newZ2);
+
+         intX = (int)newX2;
+         intZ = (int)newZ2;
+
+         //find room from function
+         inRoomID = findCurrentRoomLocation(intX, intZ);
+
+         //render distance of mob
+         distanceX = intX - mobStorage[inRoomID].x;
+         distanceZ = intZ - mobStorage[inRoomID].z;
+
+         //check if the distanceX or distanceZ is negative
+         if (distanceX < 0)
+         {
+            distanceX = (distanceX * (-1));
+         }
+         
+         if (distanceZ < 0)
+         {
+            distanceZ = (distanceZ * (-1));
+         }
+         distanceAway = (float)(distanceX * distanceX) + (distanceZ * distanceZ);
+         distanceAway = sqrt(distanceAway);
+
+
+         if (inRoomID != -1)
+         {
+            mobVisible = PointInFrustum2(mobStorage[inRoomID].x, mobStorage[inRoomID].y, mobStorage[inRoomID].z);
+            if (mobVisible && distanceAway <= 15.0)
+            {
+               //printf("SHOW MESH\n");
+               outputMeshInfo(mobStorage, inRoomID, mobVisible);
+               drawMesh(inRoomID);
+            }
+            else
+            {
+               //printf("HIDE MESH\n");
+               outputMeshInfo(mobStorage, inRoomID, mobVisible);
+               hideMesh(inRoomID);
+            }
+
+            previousRoomID = inRoomID;
+         }
+         else if (previousRoomID != -1)
+         {
+            //previously was in a room
+            //printf("previousRoomID: %d\n", previousRoomID);
+
+            //render distance of mob
+            distanceX = intX - mobStorage[previousRoomID].x;
+            distanceZ = intZ - mobStorage[previousRoomID].z;
+
+            //check if the distanceX or distanceZ is negative
+            if (distanceX < 0)
+            {
+               distanceX = (distanceX * (-1));
+            }
+
+            if (distanceZ < 0)
+            {
+               distanceZ = (distanceZ * (-1));
+            }
+
+            distanceAway = (float)(distanceX * distanceX) + (distanceZ * distanceZ);
+
+            distanceAway = sqrt(distanceAway);
+
+            //printf("distanceAway: %0.2lf\n", distanceAway);
+
+            if (distanceAway > 15.0)
+            {
+               hideMesh(previousRoomID);
+            }
+         }
+      }
+      else
+      {
+         for (i = 0; i < 9; i++)
+         {
+            hideMesh(i);
          }
       }
 
@@ -769,6 +1125,135 @@ void update()
       if (cloud_check == 1)
       {
          generateClouds();
+      }
+
+      //mob animationes
+      if (cloud_check == 0)
+      {
+         int mobX;
+         int mobY;
+         int mobZ;
+         float playerX;
+         float playerY;
+         float playerZ;
+         int intX;
+         int intZ;
+         int wallColour = 6;
+         bool wallCheck;
+         int currentRoom;
+
+         getViewPosition(&playerX, &playerY, &playerZ);
+         playerX = inverseValue(playerX);
+         playerY = inverseValue(playerY);
+         playerZ = inverseValue(playerZ);
+         intX = (int)playerX;
+         intZ = (int)playerZ;
+
+         //find current from function
+         currentRoom = findCurrentRoomLocation(intX, intZ);
+
+         //Move x
+         mobX = (int)mobStorage[currentRoom].x;
+         mobY = (int)mobStorage[currentRoom].y;
+         mobZ = (int)mobStorage[currentRoom].z;
+
+         wallCheck = wallInFront(mobX, mobY, mobZ);
+
+         //moves the mob slowy towards the oneside to another side
+         setTranslateMesh(currentRoom, mobStorage[currentRoom].x + mobMovementSpeed, mobStorage[currentRoom].y, mobStorage[currentRoom].z);
+
+         // speific cow case since cow direction is opposite of the rest of the mobs
+         if (mobStorage[currentRoom].mobType == 0)
+         {
+            setRotateMesh(currentRoom, 0, 180, 0);
+         }
+
+         if (mobMovementSpeed > 0 && mobStorage[currentRoom].mobType == 0)
+         {
+            setRotateMesh(currentRoom, 0, 270, 0);
+         }
+
+         if (mobMovementSpeed < 0 && mobStorage[currentRoom].mobType == 0)
+         {
+            setRotateMesh(currentRoom, 0, 90, 0);
+         }
+
+         //positive x direction
+         if (mobMovementSpeed > 0 && mobStorage[currentRoom].mobType != 0)
+         {
+            setRotateMesh(currentRoom, 0, 90, 0);
+         }
+
+         if (mobMovementSpeed < 0 && mobStorage[currentRoom].mobType != 0)
+         {
+            setRotateMesh(currentRoom, 0, 270, 0);
+         }
+
+         if (wallCheck)
+         {
+            //printf("wall\n");
+            //wall exists flip the direction of x
+            mobMovementSpeed = (mobDirection * mobMovementSpeed);
+         }
+
+         //stores the new location of the moved mob
+         mobStorage[currentRoom].x = mobStorage[currentRoom].x + mobMovementSpeed;
+         mobStorage[currentRoom].y = mobStorage[currentRoom].y;
+         mobStorage[currentRoom].z = mobStorage[currentRoom].z;
+      }
+   }
+}
+
+bool wallInFront(int x, int y, int z)
+{
+   if (world[x - 1][y][z] != 0 || world[x + 1][y][z] != 0 || world[x][y][z] != 0)
+   {
+      return true;
+   }
+
+   return false;
+}
+
+void outputMeshInfo(Mobs mobStorage[9], int roomID, bool mobVisible)
+{
+   //cow mesh
+
+   if (mobVisible)
+   {
+      if (mobStorage[roomID].mobType == 0)
+      {
+         printf("Cow mesh #%d is visible.\n", roomID);
+      }
+      else if (mobStorage[roomID].mobType == 1)
+      {
+         printf("Fish mesh #%d is visible.\n", roomID);
+      }
+      else if (mobStorage[roomID].mobType == 2)
+      {
+         printf("Bat mesh #%d is visible.\n", roomID);
+      }
+      else if (mobStorage[roomID].mobType == 3)
+      {
+         printf("Cactus mesh #%d is visible.\n", roomID);
+      }
+   }
+   else
+   {
+      if (mobStorage[roomID].mobType == 0)
+      {
+         printf("Cow mesh #%d is not visible.\n", roomID);
+      }
+      else if (mobStorage[roomID].mobType == 1)
+      {
+         printf("Fish mesh #%d is not visible.\n", roomID);
+      }
+      else if (mobStorage[roomID].mobType == 2)
+      {
+         printf("Bat mesh #%d is not visible.\n", roomID);
+      }
+      else if (mobStorage[roomID].mobType == 3)
+      {
+         printf("Cactus mesh #%d is not visible.\n", roomID);
       }
    }
 }
@@ -945,22 +1430,61 @@ int main(int argc, char **argv)
    {
 
       /* your code to build the world goes here */
+      // initalize global variable values to 0
+      for (int i = 0; i < 9; i++)
+      {
+         activeRooms[i] = 0;
+      }
+
+      for (int i = 0; i < WORLDX; i++)
+      {
+         for (int j = 0; j < WORLDZ; j++)
+         {
+            activeHallways[i][0][j] = 0;
+         }
+      }
+
       int WORLD_Y = 24;
+
       //Pinkish white colour = 69
       //0.909, 0.470, 0.737
-      setUserColour(69, 0.909, 0.470, 0.737, 1.0, 0.909, 0.470, 0.737, 1.0);
+      setUserColour(69, 0.909, 0.470, 0.737, 1.0, 0.909, 0.470, 0.737, 1.0); //used for the ground colour
+      setAssignedTexture(69, 11);
+
       //White colour = 10
       //0.752, 0.725, 0.725
-      setUserColour(10, 0.752, 0.725, 0.725, 1.0, 0.752, 0.725, 0.725, 1.0);
+      setUserColour(10, 0.752, 0.725, 0.725, 1.0, 0.752, 0.725, 0.725, 1.0); //used for the snow / cloud / colour
+      setAssignedTexture(10, 6);
+
       //Green colour = 11
       //0.078, 0.180, 0.086
-      setUserColour(11, 0.078, 0.180, 0.086, 1.0, 0.078, 0.180, 0.086, 1.0);
+      setUserColour(11, 0.078, 0.180, 0.086, 1.0, 0.078, 0.180, 0.086, 1.0); //used for the grass colour
+      setAssignedTexture(11, 41);
+
       //Brown colour = 12
       //0.250, 0.109, 0.109
-      setUserColour(12, 0.250, 0.109, 0.109, 1.0, 0.250, 0.109, 0.109, 1.0);
+      setUserColour(12, 0.250, 0.109, 0.109, 1.0, 0.250, 0.109, 0.109, 1.0); //used for the dirt ground colour
+      setAssignedTexture(12, 2);
+
       //Gray colour = 13
       //0.160, 0.160, 0.160
-      setUserColour(13, 0.160, 0.160, 0.160, 1.0, 0.160, 0.160, 0.160, 1.0);
+      setUserColour(13, 0.160, 0.160, 0.160, 1.0, 0.160, 0.160, 0.160, 1.0); //used for the down stairs colour
+      setAssignedTexture(13, 18);
+
+      //default black colour = 4 // also used for the ground colour
+      //new black colour = 14
+      //0.141, 0.141, 0.141
+      setUserColour(14, 0.141, 0.141, 0.141, 1.0, 0.141, 0.141, 0.141, 1.0); //used for the down stairs colour
+      setAssignedTexture(14, 11);
+
+      //default white colour = 5 // also the upstair colour
+      setAssignedTexture(5, 18);
+
+      //default purple colour = 6 // also the wall colour
+      setAssignedTexture(6, 13);
+
+      //default red colour = 3 // the box colour
+      setAssignedTexture(3, 22);
 
       initWorld();
       //showWorldGrid();
@@ -1096,7 +1620,7 @@ void generateDungeonLevel(worldLevels database[2])
    //Colour of blocks
    int wallColour = 6;
    int floorShade = 69;
-   int floorColour = 4;
+   int floorColour = 14;
    int cubeColour = 3;
 
    //These need to be different colours later
@@ -5720,5 +6244,55 @@ void generateClouds()
    if (cloud_speed >= 100)
    {
       cloud_speed = 0;
+   }
+}
+
+void generateMob(Room storage[9], Mobs mobStorage[9])
+{
+   int randMeshID;
+   float wallOffset = 3.0;
+   float mobInSkyOffset = 4.0;
+   float groundOffset;
+   float x;
+   float y;
+   float z;
+
+   srand(time(NULL)); //Include this at the beginning of using rand()
+
+   for (int i = 0; i < 9; i++)
+   {
+      randMeshID = rand() % 4;
+      //printf("randMeshID: %d\n", randMeshID);
+
+      x = (float)storage[i].startingX;
+      y = (float)WORLD_Y;
+      z = (float)storage[i].startingZ;
+
+      if (randMeshID == 0) //cow
+      {
+         groundOffset = 1.75;
+         setMeshID(i, randMeshID, x + wallOffset, y + groundOffset + mobInSkyOffset, z + wallOffset);
+      }
+      else if (randMeshID == 1) //fish
+      {
+         groundOffset = 1.75;
+         setMeshID(i, randMeshID, x + wallOffset, y + groundOffset + mobInSkyOffset, z + wallOffset);
+      }
+      else if (randMeshID == 2) //bat
+      {
+         groundOffset = 1.0;
+         setMeshID(i, randMeshID, x + wallOffset, y + groundOffset + mobInSkyOffset, z + wallOffset);
+      }
+      else if (randMeshID == 3) //catus
+      {
+         groundOffset = 1.0;
+         setMeshID(i, randMeshID, x + wallOffset, y + groundOffset + mobInSkyOffset, z + wallOffset);
+      }
+
+      mobStorage[i].mobType = randMeshID;
+      mobStorage[i].x = x + wallOffset;
+      mobStorage[i].y = y + groundOffset + mobInSkyOffset;
+      mobStorage[i].z = z + wallOffset;
+      hideMesh(i);
    }
 }
